@@ -3,6 +3,10 @@
    License: none (public domain)
 */
 
+#preload-01 { background: url(ship.png) no-repeat -9999px -9999px; }
+#preload-02 { background: url(shipBackward.png) no-repeat -9999px -9999px; }
+#preload-03 { background: url(shipForward.png) no-repeat -9999px -9999px; }
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
