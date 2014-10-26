@@ -6,9 +6,10 @@ boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
 //your variable declarations here
 public void setup(){
   //your code here
-  size(900,900);
+  size(700,700);
   myShip =  new SpaceShip();
   myStarField = new StarField();
+
 }
 public void draw() {
 	background(0);

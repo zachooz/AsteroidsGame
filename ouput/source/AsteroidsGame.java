@@ -14,6 +14,8 @@ import java.io.IOException;
 
 public class AsteroidsGame extends PApplet {
 
+/* @pjs preload="ship.png; shipBackward.png; shipForward.png; star1.png;*/
+
 SpaceShip myShip;
 StarField myStarField;
 boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
@@ -21,8 +23,12 @@ boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
 public void setup(){
   //your code here
   size(900,900);
+  if (frame != null) {
+    frame.setResizable(true);
+  }
   myShip =  new SpaceShip();
   myStarField = new StarField();
+
 }
 public void draw() {
 	background(0);
