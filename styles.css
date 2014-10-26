@@ -84,7 +84,7 @@ body {
 }
 #content {
     display: block;
-    margin-left: auto auto;
+    margin: auto auto;
 	margin-top:1em;
 }
 header {
