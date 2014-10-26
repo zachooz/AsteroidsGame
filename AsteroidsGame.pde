@@ -1,26 +1,26 @@
 SpaceShip myShip;
+StarField myStarField;
 boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
 //your variable declarations here
-PImage ship;
 public void setup(){
   //your code here
   size(500,500);
-  ship=loadImage("ship.png");
   myShip =  new SpaceShip();
+  myStarField = new StarField();
 }
 public void draw() {
 	background(0);
+	myStarField.showField();
 	myShip.show(); 
 	myShip.move(); 
-	ship=loadImage("ship.png");
 	if (accelerate) {
 		myShip.accelerate(myShip.acceleration);
-		ship=loadImage("shipForward.png");
+		
 	} 
 
 	if (decelerate) {
 		myShip.accelerate(myShip.acceleration*-1);
-		ship=loadImage("shipBackward.png");
+		
 	} 
 
 	if (turnCounterClockwise) {
@@ -33,57 +33,60 @@ public void draw() {
 }
 class SpaceShip extends Floater{
   public float acceleration;
+  private PImage ship;
   public SpaceShip(){
     acceleration=.1;
-	/* FOR POLYGON SHIP
-    corners=3;
-    xCorners=new int[3];
-    yCorners=new int[3];
-    xCorners[0]=-5;
-    xCorners[1]=5;
-    xCorners[2]=-5;
-    yCorners[0]=-5;
-    yCorners[1]=0;
-    yCorners[2]=5;
-	*/
     myColor=color(255,165,0);   
     myCenterX=width/2;
     myCenterY=height/2;  
     myDirectionX=0;
     myDirectionY=0;
     myPointDirection=0;
+	ship=loadImage("ship.png");
   } 
   public void setX(int x){
     myCenterX=x;
-  };  
+  } 
   public int getX(){
     return (int) (myCenterX);
-  };   
+  }  
   public void setY(int y){
     myCenterY=y;
-  };   
+  }  
   public int getY(){
     return (int) (myCenterY);
-  };   
+  }  
   public void setDirectionX(double x){
     myDirectionX = x;
-  };   
+  }  
   public double getDirectionX(){
     return myDirectionX;
-  };   
+  }  
   public void setDirectionY(double y){
     myDirectionY = y;
-  };   
+  }   
   public double getDirectionY(){
     return myDirectionY;
-  };   
+  }  
   public void setPointDirection(int degrees){
     myPointDirection=degrees;
-  };   
+  }  
   public double getPointDirection(){
     return myPointDirection;
-  }; 
-  public void show(){  //Draws the floater at the current position              
+  }
+  public void accelerate(double dAmount){          
+    //convert the current direction the floater is pointing to radians    
+    double dRadians =myPointDirection*(Math.PI/180);     
+    //change coordinates of direction of travel    
+    myDirectionX += ((dAmount) * Math.cos(dRadians));    
+    myDirectionY += ((dAmount) * Math.sin(dRadians));
+	if(dAmount>0){
+		ship=loadImage("shipForward.png"); //change image due to acceleration
+	} else {
+		ship=loadImage("shipBackward.png");
+	}
+  }  
+  public void show(){  //Draws the floater at the current position   
     fill(myColor);   
     stroke(myColor);    
     //convert degrees to radians for sin and cos         
@@ -94,6 +97,7 @@ class SpaceShip extends Floater{
 		rotate((float)dRadians);
 		image(ship, 0, 0, 50, 47);
 	popMatrix();
+	ship=loadImage("ship.png"); //will be normal unless changed by acceleration later
   } 
 }
 
@@ -163,6 +167,82 @@ abstract class Floater {//Do NOT modify the Floater class! Make changes in the S
     endShape(CLOSE);  
   }   
 } 
+
+//star class
+public class Star{
+	private PImage starImage;
+	private int x;
+	private int y;
+	private int waitTime; //holds the time left to change images
+	private int myWait; //holds the total time needed to wait after each change;
+	private int theSecond; //holds the last set second
+	private String currentImage;
+	public Star(){
+		//holds the image that the star will be set to
+		currentImage="star1.png";
+		starImage=loadImage(currentImage);
+		
+		//sets a random position on the screen for the stars
+		x = (int) (Math.random()*width);
+		y = (int) (Math.random()*height);
+		
+		//sets the second to the current second
+		theSecond = second();
+
+		//makes a random wait time for each star
+		waitTime = (int) (Math.random()*10 + 1);
+		myWait = waitTime;
+		
+	}
+	//displays the star
+	public void display(){
+		//chooses the image that the star will display
+		chooseImage();
+		image(starImage, x, y, 20, 20);
+	}
+	
+
+	private void chooseImage(){
+		//if a second has passed lessen the wait time by 1
+		if(theSecond != second()){
+			waitTime--;
+			theSecond=second();
+		}
+		
+		//if the wait time has ran out then set it back to its max and change the star image
+		if(waitTime == 0){
+			if(currentImage=="star1.png"){
+				currentImage = "star2.png";
+				starImage=loadImage(currentImage);
+			} else {
+				currentImage = "star1.png";
+				starImage=loadImage(currentImage);
+			}
+			waitTime=myWait;
+		}
+	}
+}
+
+//Class that holds an array of Star objects and displays all the stars in the array
+public class StarField{
+
+	public Star[] starHolder;
+	public StarField(){
+		starHolder = new Star[20];
+		for(int i=0; i<starHolder.length; i++){
+			starHolder[i] = new Star();
+		}
+	}
+	
+	public void showField(){
+		for(Star aStar : starHolder){
+			aStar.display();
+		}
+	}
+}
+
+
+//controls rotation and acceleration key inputs!
 void keyPressed(){
 	if (keyCode == UP || key == 'w') {
 		accelerate=true;
