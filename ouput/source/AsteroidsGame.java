@@ -20,7 +20,7 @@ boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
 //your variable declarations here
 public void setup(){
   //your code here
-  size(500,500);
+  size(900,900);
   myShip =  new SpaceShip();
   myStarField = new StarField();
 }

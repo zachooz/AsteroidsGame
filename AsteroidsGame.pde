@@ -4,7 +4,7 @@ boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
 //your variable declarations here
 public void setup(){
   //your code here
-  size(500,500);
+  size(900,900);
   myShip =  new SpaceShip();
   myStarField = new StarField();
 }
@@ -218,7 +218,7 @@ public class Star{
 public class StarField{
 	public Star[] starHolder;
 	public StarField(){
-		starHolder = new Star[20];
+		starHolder = new Star[30];
 		for(int i=0; i<starHolder.length; i++){
 			starHolder[i] = new Star();
 		}
