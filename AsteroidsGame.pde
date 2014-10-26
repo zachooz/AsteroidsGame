@@ -33,10 +33,14 @@ public void draw() {
 	if (turnClockwise) {
 		myShip.rotateShip(5);
 	} 
+	if(!accelerate && !decelerate){
+		myShip.notAccelerating();
+	}
 }
 class SpaceShip extends Floater{
   public float acceleration;
   private PImage ship;
+  private String currentImage;
   public SpaceShip(){
     acceleration=.1;
     myColor=color(255,165,0);   
@@ -46,6 +50,7 @@ class SpaceShip extends Floater{
     myDirectionY=0;
     myPointDirection=0;
 	ship=loadImage("ship.png");
+	currentImage="ship.png";
   } 
   public void setX(int x){
     myCenterX=x;
@@ -84,11 +89,17 @@ class SpaceShip extends Floater{
     myDirectionX += ((dAmount) * Math.cos(dRadians));    
     myDirectionY += ((dAmount) * Math.sin(dRadians));
 	if(dAmount>0){
-		ship=loadImage("shipForward.png"); //change image due to acceleration
+		currentImage="shipForward.png"; //change image due to acceleration
 	} else {
-		ship=loadImage("shipBackward.png");
+		currentImage="shipBackward.png";
 	}
-  }  
+  } 
+  
+  public void notAccelerating(){
+	if(currentImage!="ship.png"){
+		currentImage="ship.png";
+	}
+  }
   public void show(){  //Draws the floater at the current position   
     fill(myColor);   
     stroke(myColor);    
@@ -101,7 +112,7 @@ class SpaceShip extends Floater{
 		tint(255, 255);
 		image(ship, 0, 0, 50, 47);
 	popMatrix();
-	ship=loadImage("ship.png"); //will be normal unless changed by acceleration later
+	ship=loadImage(currentImage); //will be normal unless changed by acceleration later
   } 
 }
 
