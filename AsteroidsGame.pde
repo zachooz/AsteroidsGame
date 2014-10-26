@@ -101,7 +101,7 @@ class SpaceShip extends Floater{
 		tint(255, 255);
 		image(ship, 0, 0, 50, 47);
 	popMatrix();
-	//ship=loadImage("ship.png"); //will be normal unless changed by acceleration later
+	ship=loadImage("ship.png"); //will be normal unless changed by acceleration later
   } 
 }
 
