@@ -1,3 +1,5 @@
+/* @pjs preload="ship.png; shipBackward.png; shipForward.png; star1.png;*/
+
 SpaceShip myShip;
 StarField myStarField;
 boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
