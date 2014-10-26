@@ -1,3 +1,19 @@
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class AsteroidsGame extends PApplet {
+
 SpaceShip myShip;
 boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
 //your variable declarations here
@@ -34,7 +50,7 @@ public void draw() {
 class SpaceShip extends Floater{
   public float acceleration;
   public SpaceShip(){
-    acceleration=.1;
+    acceleration=.1f;
 	/* FOR POLYGON SHIP
     corners=3;
     xCorners=new int[3];
@@ -163,7 +179,7 @@ abstract class Floater {//Do NOT modify the Floater class! Make changes in the S
     endShape(CLOSE);  
   }   
 } 
-void keyPressed(){
+public void keyPressed(){
 	if (keyCode == UP || key == 'w') {
 		accelerate=true;
 	} 
@@ -184,7 +200,7 @@ void keyPressed(){
 		accelerate=true;
 	}
 }
-void keyReleased() {
+public void keyReleased() {
 	if (keyCode == UP || key == 'w') {
 		accelerate=false;
 	} 
@@ -204,4 +220,13 @@ void keyReleased() {
 	if (key == 32){
 		accelerate=false;
 	}
+}
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "AsteroidsGame" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
 }
