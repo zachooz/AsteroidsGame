@@ -111,6 +111,7 @@ class SpaceShip extends Floater{
 		imageMode(CENTER);
 		translate((float)myCenterX,(float)myCenterY);
 		rotate((float)dRadians);
+		tint(255, 255);
 		image(ship, 0, 0, 50, 47);
 	popMatrix();
 	ship=loadImage("ship.png"); //will be normal unless changed by acceleration later
@@ -187,61 +188,50 @@ abstract class Floater {//Do NOT modify the Floater class! Make changes in the S
 //star class
 public class Star{
 	private PImage starImage;
-	private int x;
-	private int y;
-	private int waitTime; //holds the time left to change images
-	private int myWait; //holds the total time needed to wait after each change;
-	private int theSecond; //holds the last set second
-	private String currentImage;
+	private int x, y;
+	private float opacity, fadeAmount;
+	private String fadeMode;
 	public Star(){
-		//holds the image that the star will be set to
-		currentImage="star1.png";
-		starImage=loadImage(currentImage);
+		//sets the star image
+		starImage=loadImage("star1.png");
 		
 		//sets a random position on the screen for the stars
 		x = (int) (Math.random()*width);
 		y = (int) (Math.random()*height);
 		
-		//sets the second to the current second
-		theSecond = second();
-
-		//makes a random wait time for each star
-		waitTime = (int) (Math.random()*10 + 1);
-		myWait = waitTime;
+		//holds star opacity
+		opacity=255;
 		
+		//holds wether to fade in or out
+		fadeMode = "out";
+		
+		//holds how much the star will fade per frame
+		fadeAmount = (float) (Math.random()*5 + 1);
 	}
 	//displays the star
 	public void display(){
-		//chooses the image that the star will display
-		chooseImage();
-		image(starImage, x, y, 20, 20);
-	}
-	
-
-	private void chooseImage(){
-		//if a second has passed lessen the wait time by 1
-		if(theSecond != second()){
-			waitTime--;
-			theSecond=second();
+		//makes star twinkle
+		if(opacity <=50){
+			fadeMode = "in";
 		}
 		
-		//if the wait time has ran out then set it back to its max and change the star image
-		if(waitTime == 0){
-			if(currentImage=="star1.png"){
-				currentImage = "star2.png";
-				starImage=loadImage(currentImage);
-			} else {
-				currentImage = "star1.png";
-				starImage=loadImage(currentImage);
-			}
-			waitTime=myWait;
+		if(opacity >= 255){
+			fadeMode = "out";
 		}
+		
+		if(fadeMode == "out"){
+			opacity-= fadeAmount;
+		} else {
+			opacity += fadeAmount;
+		}
+		tint(255, opacity);
+		image(starImage, x, y, 5, 5);
 	}
+	
 }
 
 //Class that holds an array of Star objects and displays all the stars in the array
 public class StarField{
-
 	public Star[] starHolder;
 	public StarField(){
 		starHolder = new Star[20];
