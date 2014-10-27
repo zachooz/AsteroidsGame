@@ -16,31 +16,26 @@ public void draw() {
 	myStarField.showField();
 	myShip.show(); 
 	myShip.move(); 
-	if (accelerate) {
+	if (accelerate)
 		myShip.accelerate(myShip.acceleration);
-		
-	} 
 
-	if (decelerate) {
+	if (decelerate)
 		myShip.accelerate(myShip.acceleration*-1);
-		
-	} 
 
-	if (turnCounterClockwise) {
+	if (turnCounterClockwise)
 		myShip.rotateShip(-5);
-	} 
 
-	if (turnClockwise) {
+	if (turnClockwise) 
 		myShip.rotateShip(5);
-	} 
-	if(!accelerate && !decelerate){
+
+	if(!accelerate && !decelerate)
 		myShip.notAccelerating();
-	}
 }
 class SpaceShip extends Floater{
   public float acceleration;
   private PImage ship;
   private String currentImage;
+  private double maxSpeed;
   public SpaceShip(){
     acceleration=.1;
     myColor=color(255,165,0);   
@@ -49,8 +44,9 @@ class SpaceShip extends Floater{
     myDirectionX=0;
     myDirectionY=0;
     myPointDirection=0;
-	ship=loadImage("ship.png");
-	currentImage="ship.png";
+	  ship=loadImage("ship.png");
+	  currentImage="ship.png";
+    maxSpeed = 20;
   } 
   public void setX(int x){
     myCenterX=x;
@@ -85,33 +81,33 @@ class SpaceShip extends Floater{
   public void accelerate(double dAmount){          
     //convert the current direction the floater is pointing to radians    
     double dRadians =myPointDirection*(Math.PI/180);     
-    //change coordinates of direction of travel    
-    myDirectionX += ((dAmount) * Math.cos(dRadians));    
-    myDirectionY += ((dAmount) * Math.sin(dRadians));
-	if(dAmount>0){
-		currentImage="shipForward.png"; //change image due to acceleration
-	} else {
-		currentImage="shipBackward.png";
-	}
+    //change coordinates of direction of travel 
+        myDirectionX += ((dAmount) * Math.cos(dRadians)); 
+        myDirectionY += ((dAmount) * Math.sin(dRadians));
+  	if(dAmount>0){
+  		currentImage="shipForward.png"; //change image due to acceleration
+  	} else {
+  		currentImage="shipBackward.png";
+  	}
   } 
   
   public void notAccelerating(){
-	if(currentImage!="ship.png"){
-		currentImage="ship.png";
-	}
+  	if(currentImage!="ship.png"){
+  		currentImage="ship.png";
+  	}
   }
   public void show(){  //Draws the floater at the current position   
     fill(myColor);   
     stroke(myColor);    
     //convert degrees to radians for sin and cos         
     double dRadians = myPointDirection*(Math.PI/180);  
-	pushMatrix();
-		imageMode(CENTER);
-		translate((float)myCenterX,(float)myCenterY);
-		rotate((float)dRadians);
-		tint(255, 255);
-		image(ship, 0, 0, 50, 47);
-	popMatrix();
+	   pushMatrix();
+		    imageMode(CENTER);
+		    translate((float)myCenterX,(float)myCenterY);
+		    rotate((float)dRadians);
+		    tint(255, 255);
+		    image(ship, 0, 0, 50, 47);
+	   popMatrix();
 	ship=loadImage(currentImage); //will be normal unless changed by acceleration later
   } 
 }

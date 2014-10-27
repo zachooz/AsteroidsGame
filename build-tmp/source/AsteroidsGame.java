@@ -14,69 +14,118 @@ import java.io.IOException;
 
 public class AsteroidsGame extends PApplet {
 
-SpaceShip myShip;
+/* @pjs preload="ship.png, shipBackward.png, shipForward.png, star1.png;*/
 
+SpaceShip myShip;
+StarField myStarField;
+boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
 //your variable declarations here
 public void setup(){
   //your code here
-  size(500,500);
+  size(700,700);
   myShip =  new SpaceShip();
+  myStarField = new StarField();
+
 }
 public void draw() {
-  background(0);
-  myShip.show(); 
-  myShip.move(); 
+	background(0);
+	myStarField.showField();
+	myShip.show(); 
+	myShip.move(); 
+	if (accelerate)
+		myShip.accelerate(myShip.acceleration);
+
+	if (decelerate)
+		myShip.accelerate(myShip.acceleration*-1);
+
+	if (turnCounterClockwise)
+		myShip.rotateShip(-5);
+
+	if (turnClockwise) 
+		myShip.rotateShip(5);
+
+	if(!accelerate && !decelerate)
+		myShip.notAccelerating();
 }
 class SpaceShip extends Floater{
-  public int acceleration;
+  public float acceleration;
+  private PImage ship;
+  private String currentImage;
+  private double maxSpeed;
   public SpaceShip(){
-    acceleration=3;
-    corners=3;
-    xCorners=new int[3];
-    yCorners=new int[3];
-    xCorners[0]=-5;
-    xCorners[1]=5;
-    xCorners[2]=-5;
-    yCorners[0]=-5;
-    yCorners[1]=0;
-    yCorners[2]=5;
+    acceleration=.1f;
     myColor=color(255,165,0);   
     myCenterX=width/2;
     myCenterY=height/2;  
     myDirectionX=0;
     myDirectionY=0;
     myPointDirection=0;
+	  ship=loadImage("ship.png");
+	  currentImage="ship.png";
+    maxSpeed = 20;
   } 
   public void setX(int x){
     myCenterX=x;
-  };  
+  } 
   public int getX(){
     return (int) (myCenterX);
-  };   
+  }  
   public void setY(int y){
     myCenterY=y;
-  };   
+  }  
   public int getY(){
     return (int) (myCenterY);
-  };   
+  }  
   public void setDirectionX(double x){
     myDirectionX = x;
-  };   
+  }  
   public double getDirectionX(){
     return myDirectionX;
-  };   
+  }  
   public void setDirectionY(double y){
     myDirectionY = y;
-  };   
+  }   
   public double getDirectionY(){
     return myDirectionY;
-  };   
+  }  
   public void setPointDirection(int degrees){
     myPointDirection=degrees;
-  };   
+  }  
   public double getPointDirection(){
     return myPointDirection;
-  }; 
+  }
+  public void accelerate(double dAmount){          
+    //convert the current direction the floater is pointing to radians    
+    double dRadians =myPointDirection*(Math.PI/180);     
+    //change coordinates of direction of travel 
+        myDirectionX += ((dAmount) * Math.cos(dRadians)); 
+        myDirectionY += ((dAmount) * Math.sin(dRadians));
+  	if(dAmount>0){
+  		currentImage="shipForward.png"; //change image due to acceleration
+  	} else {
+  		currentImage="shipBackward.png";
+  	}
+  } 
+  
+  public void notAccelerating(){
+  	if(currentImage!="ship.png"){
+  		currentImage="ship.png";
+  	}
+  }
+  public void show(){  //Draws the floater at the current position   
+    fill(myColor);   
+    stroke(myColor);    
+    //convert degrees to radians for sin and cos         
+    double dRadians = myPointDirection*(Math.PI/180);  
+	   pushMatrix();
+		    imageMode(CENTER);
+		    translate((float)myCenterX,(float)myCenterY);
+		    rotate((float)dRadians);
+		    tint(255, 255);
+		    image(ship, 0, 0, 50, 47);
+	   popMatrix();
+	ship=loadImage(currentImage); //will be normal unless changed by acceleration later
+  } 
 }
 
 abstract class Floater {//Do NOT modify the Floater class! Make changes in the SpaceShip class {   
@@ -106,7 +155,7 @@ abstract class Floater {//Do NOT modify the Floater class! Make changes in the S
     myDirectionX += ((dAmount) * Math.cos(dRadians));    
     myDirectionY += ((dAmount) * Math.sin(dRadians));       
   }   
-  public void rotate(int nDegreesOfRotation){     
+  public void rotateShip(int nDegreesOfRotation){     
     //rotates the floater by a given number of degrees    
     myPointDirection+=nDegreesOfRotation;   
   }   
@@ -133,7 +182,7 @@ abstract class Floater {//Do NOT modify the Floater class! Make changes in the S
     fill(myColor);   
     stroke(myColor);    
     //convert degrees to radians for sin and cos         
-    double dRadians = myPointDirection*(Math.PI/180);                 
+    double dRadians = myPointDirection*(Math.PI/180);  
     int xRotatedTranslated, yRotatedTranslated;    
     beginShape();         
     for(int nI = 0; nI < corners; nI++){     
@@ -146,28 +195,111 @@ abstract class Floater {//Do NOT modify the Floater class! Make changes in the S
   }   
 } 
 
+//star class
+public class Star{
+	private PImage starImage;
+	private int x, y;
+	private float opacity, fadeAmount;
+	private String fadeMode;
+	public Star(){
+		//sets the star image
+		starImage=loadImage("star1.png");
+		
+		//sets a random position on the screen for the stars
+		x = (int) (Math.random()*width);
+		y = (int) (Math.random()*height);
+		
+		//holds star opacity
+		opacity=255;
+		
+		//holds wether to fade in or out
+		fadeMode = "out";
+		
+		//holds how much the star will fade per frame
+		fadeAmount = (float) (Math.random()*5 + 1);
+	}
+	//displays the star
+	public void display(){
+		//makes star twinkle
+		if(opacity <=50){
+			fadeMode = "in";
+		}
+		
+		if(opacity >= 255){
+			fadeMode = "out";
+		}
+		
+		if(fadeMode == "out"){
+			opacity-= fadeAmount;
+		} else {
+			opacity += fadeAmount;
+		}
+		tint(255, opacity);
+		image(starImage, x, y, 5, 5);
+	}
+	
+}
 
+//Class that holds an array of Star objects and displays all the stars in the array
+public class StarField{
+	public Star[] starHolder;
+	public StarField(){
+		starHolder = new Star[30];
+		for(int i=0; i<starHolder.length; i++){
+			starHolder[i] = new Star();
+		}
+	}
+	
+	public void showField(){
+		for(Star aStar : starHolder){
+			aStar.display();
+		}
+	}
+}
+
+
+//controls rotation and acceleration key inputs!
 public void keyPressed(){
-  
-  if (keyCode == UP || key == 87) {
+	if (keyCode == UP || key == 'w') {
+		accelerate=true;
+	} 
 
-  } 
-  
-  if (keyCode == DOWN || key == 83) {
+	if (keyCode == DOWN || key == 's') {
+		decelerate=true;
+	} 
 
-  } 
-  
-  if (keyCode == LEFT || key == 65) {
+	if (keyCode == LEFT || key == 'a') {
+		turnCounterClockwise=true;
+	} 
 
-  } 
-  
-  if (keyCode == RIGHT || key == 68) {
+	if (keyCode == RIGHT || key == 'd') {
+		turnClockwise=true;
+	} 
 
-  } 
-  
-  if (key == 32){
-    myShip.accelerate(myShip.acceleration);
-  }
+	if (key == 32){
+		accelerate=true;
+	}
+}
+public void keyReleased() {
+	if (keyCode == UP || key == 'w') {
+		accelerate=false;
+	} 
+
+	if (keyCode == DOWN || key == 's') {
+		decelerate=false;
+	} 
+
+	if (keyCode == LEFT || key == 'a') {
+		turnCounterClockwise=false;
+	} 
+
+	if (keyCode == RIGHT || key == 'd') {
+		turnClockwise=false;
+	} 
+
+	if (key == 32){
+		accelerate=false;
+	}
 }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "AsteroidsGame" };
