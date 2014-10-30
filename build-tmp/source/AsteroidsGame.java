@@ -19,12 +19,14 @@ public class AsteroidsGame extends PApplet {
 SpaceShip myShip;
 StarField myStarField;
 boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
+PImage bullet;
 //your variable declarations here
 public void setup(){
   //your code here
   size(700,700);
   myShip =  new SpaceShip();
   myStarField = new StarField();
+  bullet=loadImage("bullet.png");
 
 }
 public void draw() {
@@ -46,23 +48,21 @@ public void draw() {
 
 	if(!accelerate && !decelerate)
 		myShip.notAccelerating();
+  if (mousePressed == true)
+    myShip.shoot();
 }
-class SpaceShip extends Floater{
-  public float acceleration;
-  private PImage ship;
-  private String currentImage;
-  private double maxSpeed;
-  public SpaceShip(){
-    acceleration=.1f;
-    myColor=color(255,165,0);   
-    myCenterX=width/2;
-    myCenterY=height/2;  
-    myDirectionX=0;
-    myDirectionY=0;
-    myPointDirection=0;
-	  ship=loadImage("ship.png");
-	  currentImage="ship.png";
-    maxSpeed = 20;
+class aBullet extends Floater{
+  private String currentBullet;
+  private double speed;
+  private double dRadians;
+  public aBullet(double myPointDirection, double myCenterX, double myCenterY){
+    speed = 15;  
+    this.myPointDirection = myPointDirection;
+    this.myCenterX=myCenterX;
+    this.myCenterY=myCenterY;   
+    dRadians =myPointDirection*(Math.PI/180);
+    myDirectionX = ((speed) * Math.cos(dRadians)); 
+    myDirectionY = ((speed) * Math.sin(dRadians));
   } 
   public void setX(int x){
     myCenterX=x;
@@ -90,11 +90,83 @@ class SpaceShip extends Floater{
   }  
   public void setPointDirection(int degrees){
     myPointDirection=degrees;
-  }  
+  }
   public double getPointDirection(){
     return myPointDirection;
   }
-  public void accelerate(double dAmount){          
+  public void accelerate(double dAmount){     
+    //convert the current direction the floater is pointing to radians    
+    dRadians =myPointDirection*(Math.PI/180);     
+    //change coordinates of direction of travel 
+        myDirectionX += ((dAmount) * Math.cos(dRadians)); 
+        myDirectionY += ((dAmount) * Math.sin(dRadians));
+  } 
+  public void show(){  //Draws the floater at the current position    
+    //convert degrees to radians for sin and cos         
+    double dRadians = myPointDirection*(Math.PI/180); 
+     pushMatrix();
+        imageMode(CENTER);
+        translate((float)myCenterX,(float)myCenterY);
+        rotate((float)dRadians);
+        tint(255, 255);
+        image(bullet, 0, 0, 50, 47);
+     popMatrix();
+  } 
+  public void move(){   //move the floater in the current direction of travel
+    //change the x and y coordinates by myDirectionX and myDirectionY       
+    myCenterX += myDirectionX;    
+    myCenterY += myDirectionY;       
+  } 
+}
+class SpaceShip extends Floater{
+  public float acceleration;
+  private PImage ship;
+  private String currentImage;
+  private aBullet[] bulletHolder;
+  private int bulletNum;
+  public SpaceShip(){
+    acceleration=.3f;   
+    myCenterX=width/2;
+    myCenterY=height/2;  
+    myDirectionX=0;
+    myDirectionY=0;
+    myPointDirection=0;
+	  ship=loadImage("ship.png");
+    currentImage="ship.png";
+    bulletHolder = new aBullet[100];
+    bulletNum = 0;
+  } 
+  public void setX(int x){
+    myCenterX=x;
+  } 
+  public int getX(){
+    return (int) (myCenterX);
+  }  
+  public void setY(int y){
+    myCenterY=y;
+  }  
+  public int getY(){
+    return (int) (myCenterY);
+  }  
+  public void setDirectionX(double x){
+    myDirectionX = x;
+  }  
+  public double getDirectionX(){
+    return myDirectionX;
+  }  
+  public void setDirectionY(double y){
+    myDirectionY = y;
+  }   
+  public double getDirectionY(){
+    return myDirectionY;
+  }  
+  public void setPointDirection(int degrees){
+    myPointDirection=degrees;
+  }
+  public double getPointDirection(){
+    return myPointDirection;
+  }
+  public void accelerate(double dAmount){     
     //convert the current direction the floater is pointing to radians    
     double dRadians =myPointDirection*(Math.PI/180);     
     //change coordinates of direction of travel 
@@ -112,9 +184,47 @@ class SpaceShip extends Floater{
   		currentImage="ship.png";
   	}
   }
-  public void show(){  //Draws the floater at the current position   
-    fill(myColor);   
-    stroke(myColor);    
+  public void move(){   //move the floater in the current direction of travel
+    //change the x and y coordinates by myDirectionX and myDirectionY       
+    myCenterX += myDirectionX;    
+    myCenterY += myDirectionY;     
+
+    //wrap around screen    
+    if(myCenterX >width){     
+      myCenterX = 0;    
+    }    
+    else if (myCenterX<0){     
+      myCenterX = width;    
+    }    
+    if(myCenterY >height){    
+      myCenterY = 0;    
+    }   
+    else if (myCenterY < 0){     
+      myCenterY = height;    
+    }
+    for(aBullet oneBullet : bulletHolder){
+      if(oneBullet!=null){
+        oneBullet.move();
+        oneBullet.show();
+      }
+    }
+  }
+  public void shoot(){
+    double dRadians =myPointDirection*(Math.PI/180); 
+    if(bulletNum>=bulletHolder.length)
+      bulletNum=0;
+
+    double theX1 = myCenterX + ((35) * Math.cos(dRadians+Math.PI/12));
+    double theY1 = myCenterY + ((35) * Math.sin(dRadians+Math.PI/9));
+
+    double theX2= myCenterX + ((35) * Math.cos(dRadians-Math.PI/12));
+    double theY2 = myCenterY + ((35) * Math.sin(dRadians-Math.PI/12));
+    bulletHolder[bulletNum]=new aBullet(myPointDirection, theX1, theY1);
+    bulletNum++;
+    bulletHolder[bulletNum]=new aBullet(myPointDirection, theX2, theY2);
+    bulletNum++;
+  }
+  public void show(){  //Draws the floater at the current position      
     //convert degrees to radians for sin and cos         
     double dRadians = myPointDirection*(Math.PI/180);  
 	   pushMatrix();
