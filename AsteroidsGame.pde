@@ -38,9 +38,6 @@ public void draw() {
     myShip.shoot();
 	shootTimer=m + 100;
   }
-  if(m>=shootTimer){
-	shootTimer=m + 100;
-  }
 }
 class aBullet extends Floater{
   private String currentBullet;
