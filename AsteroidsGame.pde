@@ -44,6 +44,7 @@ public void draw() {
   if(shootTimer >=1000 && m < 400){
 	shootTimer = 0;
   }
+  System.out.println(m + " " + shootTimer);
 }
 class aBullet extends Floater{
   private String currentBullet;
