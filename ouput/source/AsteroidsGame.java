@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class AsteroidsGame extends PApplet {
 
-/* @pjs preload="ship.png, shipBackward.png, shipForward.png, star1.png;*/
+/* @pjs preload="ship.png, shipBackward.png, shipForward.png, star1.png, bullet.png;*/
 
 SpaceShip myShip;
 StarField myStarField;
@@ -53,12 +53,14 @@ public void draw() {
   if (mousePressed == true && m>=shootTimer){
     myShip.shoot();
 	shootTimer+=100;
-  } else if(m>=shootTimer){
+  }
+  if(m>=shootTimer){
 	shootTimer+=100;
   }
   if(shootTimer >=1000 && m < 400){
 	shootTimer = 0;
   }
+  System.out.println(m + " " + shootTimer);
 }
 class aBullet extends Floater{
   private String currentBullet;

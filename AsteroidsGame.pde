@@ -36,15 +36,11 @@ public void draw() {
 		myShip.notAccelerating();
   if (mousePressed == true && m>=shootTimer){
     myShip.shoot();
-	shootTimer+=100;
+	shootTimer=m + 100;
   }
   if(m>=shootTimer){
-	shootTimer+=100;
+	shootTimer=m + 100;
   }
-  if(shootTimer >=1000 && m < 400){
-	shootTimer = 0;
-  }
-  System.out.println(m + " " + shootTimer);
 }
 class aBullet extends Floater{
   private String currentBullet;
