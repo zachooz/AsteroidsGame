@@ -1,4 +1,4 @@
-/* @pjs preload="ship.png, shipBackward.png, shipForward.png, star1.png;*/
+/* @pjs preload="ship.png, shipBackward.png, shipForward.png, star1.png, bullet.png;*/
 
 SpaceShip myShip;
 StarField myStarField;
