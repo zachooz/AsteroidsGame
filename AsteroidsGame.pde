@@ -37,7 +37,8 @@ public void draw() {
   if (mousePressed == true && m>=shootTimer){
     myShip.shoot();
 	shootTimer+=100;
-  } else if(m>=shootTimer){
+  }
+  if(m>=shootTimer){
 	shootTimer+=100;
   }
   if(shootTimer >=1000 && m < 400){
