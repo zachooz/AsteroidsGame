@@ -612,6 +612,9 @@ public class EndStroid{
 			}
 		}
 		if(life<=0){
+			if(imageName=="retry.png"){
+				gameOver=false;
+			}
 			return true;
 		}
 		return false;
@@ -658,6 +661,14 @@ public class SpaceField{
 		for(Star aStar : starHolder){
 			aStar.display();
 		}
+		for(int i = 0; i<endHolder.length; i++){
+			if(endHolder[i]!=null){
+				endHolder[i].run();
+				if(endHolder[i].collide()){
+					endHolder[i] = null;
+				}
+			}
+		}
 		for(int i = 0; i<ASTEROID_NUM; i++){
 			//controls large asteroid
 			if(asteroidHolder[i]!=null){
@@ -693,14 +704,6 @@ public class SpaceField{
 				}
 			}
 		}
-		for(int i = 0; i<endHolder.length; i++){
-			if(endHolder[i]!=null){
-				endHolder[i].run();
-				if(endHolder[i].collide()){
-					minHolder[i] = null;
-				}
-			}
-		}
 	}
 	
 	public void createDebree(double x, double y, int radius){
@@ -712,7 +715,10 @@ public class SpaceField{
 		}
 	}
 	public void endGame(){
-		
+		//EndStroid(double x, double y, int radius, String imageName
+		endHolder[0]=new EndStroid(width*2/5, height*1/5, 100, "game.png");
+		endHolder[1]=new EndStroid(width*3/5, height*1/5, 100, "over.png");
+		endHolder[2]=new EndStroid(width/2, height*3/5, 200, "retry.png");
 	}
 }
 
