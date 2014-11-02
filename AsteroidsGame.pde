@@ -52,6 +52,8 @@ public void draw() {
 }
 
 class aBullet extends Floater{
+  private int mySize = 15;
+  private float rad = mySize/2-1;
   private String currentBullet;
   private double speed;
   private double dRadians;
@@ -63,6 +65,9 @@ class aBullet extends Floater{
     dRadians =myPointDirection*(Math.PI/180);
     this.myDirectionX =  ((speed) * Math.cos(dRadians)); 
     this.myDirectionY = ((speed) * Math.sin(dRadians));
+  } 
+  public float getRad(){
+    return rad;
   } 
   public void setX(int x){
     myCenterX=x;
@@ -109,7 +114,7 @@ class aBullet extends Floater{
         translate((float)myCenterX,(float)myCenterY);
         rotate((float)dRadians);
         tint(255, 255);
-        image(bullet, 0, 0, 15, 15);
+        image(bullet, 0, 0, mySize, mySize);
      popMatrix();
   } 
   public void move(){   //move the floater in the current direction of travel
@@ -124,6 +129,8 @@ class SpaceShip extends Floater{
   private String currentImage;
   private aBullet[] bulletHolder;
   private int bulletNum;
+  private int mySize = 50;
+  private int rad = mySize/2 - 5;
   public SpaceShip(){
     acceleration=.3;   
     myCenterX=width/2;
@@ -135,6 +142,9 @@ class SpaceShip extends Floater{
     currentImage="ship.png";
     bulletHolder = new aBullet[50];
     bulletNum = 0;
+  } 
+  public int getRad(){
+    return (int) (rad);
   } 
   public aBullet[] getBullets(){
 	return bulletHolder;
@@ -245,7 +255,7 @@ class SpaceShip extends Floater{
 		    translate((float)myCenterX,(float)myCenterY);
 		    rotate((float)dRadians);
 		    tint(255, 255);
-		    image(ship, 0, 0, 50, 47);
+		    image(ship, 0, 0, mySize, mySize);
 	   popMatrix();
 	ship=loadImage(currentImage); //will be normal unless changed by acceleration later
   } 
@@ -362,20 +372,44 @@ public class Star{
 	}
 	
 }
+public class MinAsteroid extends Asteroid{
+	protected int radius=35;
+	public MinAsteroid(double x, double y){
+		this.x=x;
+		this.y=y;
+		makeDirection(x, y);
+	}
+	protected void makeDirection(double x, double y){
+		int speedConstant=4;
+		
+		directionX = (Math.random()*(speedConstant+1)-speedConstant/2);
+		directionY = (Math.random()*(speedConstant+1)-speedConstant/2);
+		
+		if(directionX == 0 && directionY == 0){
+			makeDirection(x,y);
+		}
+	}
+	protected void setPos(){
+		return;
+	}
+	protected void display(){
+		imageMode(CENTER);
+		tint(255, 255);
+		image(asteroidImage, (float)x, (float)y, (int)this.radius, (int)this.radius);
+	}
+}
 
 public class Asteroid{
-	private int radius=50;
-	private double x, y, directionX, directionY;
-	private PImage asteroidImage=loadImage("asteroid.png");
-	double rotation = 0;
-	double rotationAdd = Math.random()/5;
-	private double lifeTime = 15;
-	private int life=5;
+	private int radius=70;
+	protected double x, y, directionX, directionY;
+	protected PImage asteroidImage=loadImage("asteroid.png");
+	protected double lifeTime = 20;
+	protected int life=5;
 	public Asteroid(){
 		setPos();
 		makeDirection(x, y);
 	}
-	private void setPos(){
+	protected void setPos(){
 		int ran = (int)(Math.random()*4);
 		if(ran==0){
 			//bottom
@@ -395,7 +429,7 @@ public class Asteroid{
 			y=(Math.random()*(height-radius*2))+radius;
 		}
 	}
-	private void makeDirection(double x, double y){
+	protected void makeDirection(double x, double y){
 		double speedConstant = 1;
 		if(x>width){
 			directionX = (Math.random()*speedConstant+speedConstant)*-1;
@@ -416,42 +450,41 @@ public class Asteroid{
 			makeDirection(x,y);
 		}
 	}
-	public void run(){
+	protected void run(){
 		display();
 		move();
 
 	}
 	
-	private void move(){
+	protected void move(){
 		x+=directionX;
 		y+=directionY;
 	}
 	
-	private void display(){
-		rotation += rotationAdd;
+	protected void display(){
 		imageMode(CENTER);
 		tint(255, 255);
-		image(asteroidImage, (float)x, (float)y, (int)radius, (int)radius);
+		image(asteroidImage, (float)x, (float)y, (int)this.radius, (int)this.radius);
 	}
 	
-	public boolean timeOut(){
+	protected boolean timeOut(){
 		if(s>=spawnTimer)
 			lifeTime--;
 		if(lifeTime<=0)
 			return true;
 		return false;
 	}
-	public boolean collide(){
+	protected boolean collide(){
 		
 		//ship rad is 20!
-		if(dist((float)x,(float)y,myShip.getX(),myShip.getY())<20+radius/2){
+		if(dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2){
 			return true;
 		}
 		
 		//bullet rad is 6.5
 		for(int i = 0; i<myShip.getBullets().length; i++){
 			if(myShip.getBullets()[i]!=null){
-				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<6.5+radius/2){
+				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<myShip.getBullets()[i].getRad()+radius/2){
 					myShip.getBullets()[i]=null;
 					mySpaceField.createDebree(x,y);
 					mySpaceField.createDebree(x,y);
@@ -460,15 +493,16 @@ public class Asteroid{
 				}
 			}
 		}
-		if(life<=0)
+		if(life<=0){
 			return true;
+		}
 		return false;
 	}
 }
 
 public class Debree{
 	private PImage debreeImage=loadImage("debree.png");
-	private int radius = 15;
+	private int radius = 10;
 	private int opacity = 255;
 	private double xDir = Math.random()*3-1;
 	private double yDir = Math.random()*3-1;
@@ -495,10 +529,12 @@ public class Debree{
 
 //Class that holds arrays of objects
 public class SpaceField{
-	public Star[] starHolder;
-	public Asteroid[] asteroidHolder;
-	public Debree[] debreeHolder;
+	private Star[] starHolder;
+	private Asteroid[] asteroidHolder;
+	private Debree[] debreeHolder;
+	private MinAsteroid[] minHolder;
 	public SpaceField(){
+		minHolder = new MinAsteroid[50];
 		debreeHolder = new Debree[100];
 		starHolder = new Star[30];
 		asteroidHolder = new Asteroid[50];
@@ -511,6 +547,14 @@ public class SpaceField{
 		outer: for(int i = 0; i<asteroidHolder.length; i++){
 			if(asteroidHolder[i] == null){
 				asteroidHolder[i] = new Asteroid();
+				break outer;
+			}
+		}
+	}
+	public void spawnMinStroid(double x, double y){
+		outer: for(int i = 0; i<minHolder.length; i++){
+			if(minHolder[i] == null){
+				minHolder[i] = new MinAsteroid(x, y);
 				break outer;
 			}
 		}
@@ -528,7 +572,23 @@ public class SpaceField{
 				}
 				if(asteroidHolder[i]!=null){
 					if(asteroidHolder[i].collide()){
+						mySpaceField.spawnMinStroid(asteroidHolder[i].x,asteroidHolder[i].y);
+						mySpaceField.spawnMinStroid(asteroidHolder[i].x,asteroidHolder[i].y);
+						mySpaceField.spawnMinStroid(asteroidHolder[i].x,asteroidHolder[i].y);
 						asteroidHolder[i] = null;
+					}
+				}
+			}
+		}
+		for(int i = 0; i<minHolder.length; i++){
+			if(minHolder[i]!=null){
+				minHolder[i].run();
+				if(minHolder[i].timeOut()){
+					minHolder[i] = null;
+				}
+				if(minHolder[i]!=null){
+					if(minHolder[i].collide()){
+						minHolder[i] = null;
 					}
 				}
 			}
