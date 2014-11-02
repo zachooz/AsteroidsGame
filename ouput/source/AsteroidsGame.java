@@ -15,7 +15,7 @@ import java.io.IOException;
 public class AsteroidsGame extends PApplet {
 
 /* @pjs preload="ship.png, asteroid.png, shipBackward.png, shipForward.png, star1.png, bullet.png, debree.png, game.png, over.png, retry.png;*/
-/* SOUND DOESNT WORK ONLINE
+/* MINIM DOESNT WORK ONLINE
 import ddf.minim.*;
 
 Minim minim;
@@ -31,6 +31,7 @@ PImage bullet;
 int shootTimer;
 int spawnTimer;
 int s;
+int score;
 //your variable declarations here
 public void setup(){
   size(700,700);
@@ -40,7 +41,7 @@ public void setup(){
   shootTimer = 100;
   spawnTimer=0;
   gameOver=false;
-  
+  score = 0;
   //music
   /*
   minim = new Minim(this);
@@ -50,12 +51,17 @@ public void setup(){
 }
 
 public void draw() {
+
 	int m = millis();
 	s = second();
 	background(0);
 	mySpaceField.showField();
 	myShip.show(); 
 	myShip.move();
+	
+	textSize(32);
+	fill(255, 255, 255);
+	text("Score: " + score, width-150, 50); 
  
 	if (accelerate)
 		myShip.accelerate(myShip.acceleration);
@@ -460,6 +466,7 @@ public class MinAsteroid extends Asteroid{
 			}
 		}
 		if(life<=0){
+			score+=1;
 			return true;
 		}
 		return false;
@@ -574,6 +581,7 @@ public class Asteroid{
 			mySpaceField.spawnMinStroid(x,y);
 			mySpaceField.spawnMinStroid(x,y);
 			mySpaceField.spawnMinStroid(x,y);
+			score+=2;
 			return true;
 		}
 		return false;
@@ -640,6 +648,7 @@ public class EndStroid{
 			}
 			if(imageName=="retry.png"){
 				gameOver=false;
+				score=0;
 			}
 			return true;
 		}
@@ -665,6 +674,7 @@ public class EndStroid{
 			}
 			if(imageName=="retry.png"){
 				gameOver=false;
+				score=0;
 			}
 			return true;
 		}
