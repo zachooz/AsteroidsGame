@@ -1,23 +1,27 @@
-/* @pjs preload="ship.png, shipBackward.png, shipForward.png, star1.png, bullet.png;*/
+/* @pjs preload="ship.png, asteroid.png, shipBackward.png, shipForward.png, star1.png, bullet.png;*/
 
 SpaceShip myShip;
-StarField myStarField;
+SpaceField mySpaceField;
 boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
 PImage bullet;
 int shootTimer;
+int spawnTimer;
+int s;
 //your variable declarations here
 public void setup(){
   //your code here
   size(700,700);
   myShip =  new SpaceShip();
-  myStarField = new StarField();
+  mySpaceField = new SpaceField();
   bullet=loadImage("bullet.png");
   shootTimer = 100;
+  spawnTimer=0;
 }
 public void draw() {
-	int m =  millis();
+	int m = millis();
+	s = second();
 	background(0);
-	myStarField.showField();
+	mySpaceField.showField();
 	myShip.show(); 
 	myShip.move(); 
 	if (accelerate)
@@ -38,7 +42,14 @@ public void draw() {
     myShip.shoot();
 	shootTimer=m + 100;
   }
+  if(s>=spawnTimer){
+	mySpaceField.spawnStroid();
+	spawnTimer=s+1;
+  }
+  if(spawnTimer == 60 && s == 0)
+	spawnTimer = 0;
 }
+
 class aBullet extends Floater{
   private String currentBullet;
   private double speed;
@@ -97,7 +108,7 @@ class aBullet extends Floater{
         translate((float)myCenterX,(float)myCenterY);
         rotate((float)dRadians);
         tint(255, 255);
-        image(bullet, 0, 0, 34, 15);
+        image(bullet, 0, 0, 15, 15);
      popMatrix();
   } 
   public void move(){   //move the floater in the current direction of travel
@@ -124,6 +135,9 @@ class SpaceShip extends Floater{
     bulletHolder = new aBullet[50];
     bulletNum = 0;
   } 
+  public aBullet[] getBullets(){
+	return bulletHolder;
+  }
   public void setX(int x){
     myCenterX=x;
   } 
@@ -348,19 +362,145 @@ public class Star{
 	
 }
 
-//Class that holds an array of Star objects and displays all the stars in the array
-public class StarField{
+public class Asteroid{
+	private int radius=50;
+	private double x, y, directionX, directionY;
+	private PImage asteroidImage=loadImage("asteroid.png");
+	double rotation = 0;
+	double rotationAdd = Math.random()/5;
+	private double lifeTime = 15;
+	private int life=5;
+	public Asteroid(){
+		setPos();
+		makeDirection(x, y);
+	}
+	private void setPos(){
+		int ran = (int)(Math.random()*4);
+		if(ran==0){
+			//bottom
+			y=height+radius;
+			x=(Math.random()*(width-radius*2))+radius;
+		} else if(ran==1){
+			//top
+			y=-1*radius;
+			x=(Math.random()*(width-radius*2))+radius;
+		} else if(ran==2){
+			//right
+			x=width+radius;
+			y=(Math.random()*(height-radius*2))+radius;
+		} else if(ran==3){
+			//left
+			x=-1*radius;
+			y=(Math.random()*(height-radius*2))+radius;
+		}
+	}
+	private void makeDirection(double x, double y){
+		double speedConstant = 1;
+		if(x>width){
+			directionX = (Math.random()*speedConstant+speedConstant)*-1;
+		} else if(x<0) {
+			directionX = (Math.random()*speedConstant+speedConstant);
+		} else {
+			directionX = (Math.random()*speedConstant*2-speedConstant);
+		}
+		if(y>height){
+			directionY = (Math.random()*speedConstant+speedConstant)*-1;
+		} else if(y<0) {
+			directionY = (Math.random()*speedConstant+speedConstant);
+		} else {
+			directionY = (Math.random()*speedConstant*2-speedConstant);
+		}
+		
+		if(directionX == 0 && directionY == 0){
+			makeDirection(x,y);
+		}
+	}
+	public void run(){
+		display();
+		move();
+
+	}
+	
+	private void move(){
+		x+=directionX;
+		y+=directionY;
+	}
+	
+	private void display(){
+		rotation += rotationAdd;
+		imageMode(CENTER);
+		tint(255, 255);
+		image(asteroidImage, (float)x, (float)y, (int)radius, (int)radius);
+	}
+	
+	public boolean timeOut(){
+		if(s>=spawnTimer)
+			lifeTime--;
+
+		if(lifeTime<=0)
+			return true;
+		if(life<=0)
+			return true;
+		return false;
+	}
+	public boolean collide(){
+		
+		//ship rad is 20!
+		if(dist((float)x,(float)y,myShip.getX(),myShip.getY())<20+radius/2){
+			return true;
+		}
+		
+		//bullet rad is 6.5
+		for(int i = 0; i<myShip.getBullets().length; i++){
+			if(myShip.getBullets()[i]!=null){
+				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<6.5+radius/2){
+					myShip.getBullets()[i]=null;
+					life--;
+				}
+			}
+		}
+		return false;
+	}
+}
+
+//Class that holds arrays of objects
+public class SpaceField{
 	public Star[] starHolder;
-	public StarField(){
+	public Asteroid[] asteroidHolder;
+	public SpaceField(){
 		starHolder = new Star[30];
+		asteroidHolder = new Asteroid[50];
 		for(int i=0; i<starHolder.length; i++){
 			starHolder[i] = new Star();
+		}
+	}
+	
+	public void spawnStroid(){
+		outer: for(int i = 0; i<asteroidHolder.length; i++){
+			if(asteroidHolder[i] == null){
+				asteroidHolder[i] = new Asteroid();
+				break outer;
+			}
+			
 		}
 	}
 	
 	public void showField(){
 		for(Star aStar : starHolder){
 			aStar.display();
+		}
+		for(int i = 0; i<asteroidHolder.length; i++){
+			if(asteroidHolder[i]!=null){
+				asteroidHolder[i].run();
+				if(asteroidHolder[i].timeOut()){
+					asteroidHolder[i] = null;
+				}
+				if(asteroidHolder[i]!=null){
+					if(asteroidHolder[i].collide()){
+						asteroidHolder[i] = null;
+					}
+				}
+			}
 		}
 	}
 }
