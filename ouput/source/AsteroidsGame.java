@@ -14,12 +14,13 @@ import java.io.IOException;
 
 public class AsteroidsGame extends PApplet {
 
-/* @pjs preload="ship.png, asteroid.png, shipBackward.png, shipForward.png, star1.png, bullet.png;*/
+/* @pjs preload="ship.png, asteroid.png, shipBackward.png, shipForward.png, star1.png, bullet.png, debree.png;*/
 
 SpaceShip myShip;
 SpaceField mySpaceField;
 boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
 PImage bullet;
+
 int shootTimer;
 int spawnTimer;
 int s;
@@ -452,10 +453,7 @@ public class Asteroid{
 	public boolean timeOut(){
 		if(s>=spawnTimer)
 			lifeTime--;
-
 		if(lifeTime<=0)
-			return true;
-		if(life<=0)
 			return true;
 		return false;
 	}
@@ -471,9 +469,41 @@ public class Asteroid{
 			if(myShip.getBullets()[i]!=null){
 				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<6.5f+radius/2){
 					myShip.getBullets()[i]=null;
+					mySpaceField.createDebree(x,y);
+					mySpaceField.createDebree(x,y);
+					mySpaceField.createDebree(x,y);
 					life--;
 				}
 			}
+		}
+		if(life<=0)
+			return true;
+		return false;
+	}
+}
+
+public class Debree{
+	private PImage debreeImage=loadImage("debree.png");
+	private int radius = 15;
+	private int opacity = 255;
+	private double xDir = Math.random()*3-1;
+	private double yDir = Math.random()*3-1;
+	private double x, y;
+	public Debree(double x, double y){
+		this.x=x + Math.random()*30-15;
+		this.y=y + Math.random()*30-15;
+	}
+	public void drawDebree(){
+		tint(255, opacity);
+		image(debreeImage, (float)x, (float)y, (int)radius, (int)radius);
+		x+=xDir;
+		y+=yDir;
+		opacity-=10;
+	}
+	
+	public boolean timeOut(){
+		if(opacity <=1){
+			return true;
 		}
 		return false;
 	}
@@ -483,7 +513,9 @@ public class Asteroid{
 public class SpaceField{
 	public Star[] starHolder;
 	public Asteroid[] asteroidHolder;
+	public Debree[] debreeHolder;
 	public SpaceField(){
+		debreeHolder = new Debree[100];
 		starHolder = new Star[30];
 		asteroidHolder = new Asteroid[50];
 		for(int i=0; i<starHolder.length; i++){
@@ -497,7 +529,6 @@ public class SpaceField{
 				asteroidHolder[i] = new Asteroid();
 				break outer;
 			}
-			
 		}
 	}
 	
@@ -516,6 +547,23 @@ public class SpaceField{
 						asteroidHolder[i] = null;
 					}
 				}
+			}
+		}
+		for(int i = 0; i<debreeHolder.length; i++){
+			if(debreeHolder[i]!=null){
+				debreeHolder[i].drawDebree();
+				if(debreeHolder[i].timeOut()){
+					debreeHolder[i] = null;
+				}
+			}
+		}
+	}
+	
+	public void createDebree(double x, double y){
+		outer: for(int i = 0; i<debreeHolder.length; i++){
+			if(debreeHolder[i] == null){
+				debreeHolder[i] = new Debree(x, y);
+				break outer;
 			}
 		}
 	}
