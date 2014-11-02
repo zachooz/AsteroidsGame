@@ -611,6 +611,9 @@ public class EndStroid{
 			for(int i=0; i<30; i++){
 				mySpaceField.createDebree(x,y,radius);
 			}
+			for(int i=0;i<5;i++){
+				mySpaceField.spawnMinStroid(x,y);
+			}
 			if(imageName=="retry.png"){
 				gameOver=false;
 			}
@@ -630,6 +633,9 @@ public class EndStroid{
 			}
 		}
 		if(life<=0){
+			for(int i=0;i<5;i++){
+				mySpaceField.spawnMinStroid(x,y);
+			}
 			if(imageName=="retry.png"){
 				gameOver=false;
 			}
