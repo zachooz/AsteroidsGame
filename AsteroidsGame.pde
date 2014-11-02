@@ -1,9 +1,11 @@
 /* @pjs preload="ship.png, asteroid.png, shipBackward.png, shipForward.png, star1.png, bullet.png, debree.png, game.png, over.png, retry.png;*/
+/* SOUND DOESNT WORK ONLINE
 import ddf.minim.*;
 
 Minim minim;
 AudioPlayer player;
 AudioInput input;
+*/
 
 SpaceShip myShip;
 SpaceField mySpaceField;
@@ -24,9 +26,11 @@ public void setup(){
   gameOver=false;
   
   //music
+  /*
   minim = new Minim(this);
   player = minim.loadFile("pew.mp3");
   input = minim.getLineIn();
+  */
 }
 
 public void draw() {
@@ -52,9 +56,10 @@ public void draw() {
 	if(!accelerate && !decelerate)
 		myShip.notAccelerating();
 	if (mousePressed == true && m>=shootTimer){
+		/*
 		player.play();
 		player = minim.loadFile("pew.mp3");	
-	
+		*/
 		myShip.shoot();
 		shootTimer=m + 100;
 	}
