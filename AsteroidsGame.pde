@@ -636,7 +636,9 @@ public class EndStroid{
 					for(int a=0; a<3; a++){
 						mySpaceField.createDebree(x,y,radius);
 					}
-					life--;
+					if(imageName=="retry.png"){
+						life--;
+					}
 				}
 			}
 		}
