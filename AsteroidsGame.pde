@@ -1,4 +1,4 @@
-/* @pjs preload="ship.png, asteroid.png, shipBackward.png, shipForward.png, star1.png, bullet.png, debree.png;*/
+/* @pjs preload="ship.png, asteroid.png, shipBackward.png, shipForward.png, star1.png, bullet.png, debree.png, game.png, over.png, retry.png;*/
 
 SpaceShip myShip;
 SpaceField mySpaceField;
@@ -20,44 +20,41 @@ public void setup(){
   gameOver=false;
 }
 public void draw() {
-	if(!gameOver){
-		int m = millis();
-		s = second();
-		background(0);
-		mySpaceField.showField();
-		myShip.show(); 
-		myShip.move(); 
-		if (accelerate)
-			myShip.accelerate(myShip.acceleration);
+	int m = millis();
+	s = second();
+	background(0);
+	mySpaceField.showField();
+	myShip.show(); 
+	myShip.move();
+ 
+	if (accelerate)
+		myShip.accelerate(myShip.acceleration);
 
-		if (decelerate)
-			myShip.accelerate(myShip.acceleration*-1);
+	if (decelerate)
+		myShip.accelerate(myShip.acceleration*-1);
 
-		if (turnCounterClockwise)
-			myShip.rotateShip(-5);
+	if (turnCounterClockwise)
+		myShip.rotateShip(-5);
 
-		if (turnClockwise) 
-			myShip.rotateShip(5);
+	if (turnClockwise) 
+		myShip.rotateShip(5);
 
-		if(!accelerate && !decelerate)
-			myShip.notAccelerating();
-	  if (mousePressed == true && m>=shootTimer){
+	if(!accelerate && !decelerate)
+		myShip.notAccelerating();
+	if (mousePressed == true && m>=shootTimer){
 		myShip.shoot();
 		shootTimer=m + 100;
-	  }
-	  if(s>=spawnTimer){
-		mySpaceField.spawnStroid();
-		spawnTimer=s+1;
-	  }
-	  if(spawnTimer == 60 && s == 0)
-		spawnTimer = 0;
-    } else {
-		textAlign(CENTER, BOTTOM);
-		textSize(32);
-		fill(0, 0, 0);
-		text("word", 10, 30); 
-
 	}
+
+  if(s>=spawnTimer){
+	if(!gameOver){
+		mySpaceField.spawnStroid();
+	}
+	spawnTimer=s+1;
+  }
+  if(spawnTimer == 60 && s == 0)
+	spawnTimer = 0;
+
 }
 
 class aBullet extends Floater{
@@ -147,7 +144,7 @@ class SpaceShip extends Floater{
     myDirectionX=0;
     myDirectionY=0;
     myPointDirection=0;
-	  ship=loadImage("ship.png");
+	ship=loadImage("ship.png");
     currentImage="ship.png";
     bulletHolder = new aBullet[50];
     bulletNum = 0;
@@ -408,10 +405,11 @@ public class MinAsteroid extends Asteroid{
 	}
 	protected boolean collide(){
 		//ship rad is 20!
-		if(dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2){
+		if((dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2) || gameOver){
 			for(int i=0; i<10; i++){
-				mySpaceField.createDebree(x,y);
+				mySpaceField.createDebree(x,y,radius);
 			}
+			endGame();
 			return true;
 		}
 		
@@ -421,7 +419,7 @@ public class MinAsteroid extends Asteroid{
 				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<myShip.getBullets()[i].getRad()+radius/2){
 					myShip.getBullets()[i]=null;
 					for(int a=0; a<3; a++){
-						mySpaceField.createDebree(x,y);
+						mySpaceField.createDebree(x,y,radius);
 					}
 					life--;
 				}
@@ -511,10 +509,11 @@ public class Asteroid{
 	}
 	protected boolean collide(){
 		//ship rad is 20!
-		if(dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2){
+		if((dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2) || gameOver){
 			for(int i=0; i<10; i++){
-				mySpaceField.createDebree(x,y);
+				mySpaceField.createDebree(x,y,radius);
 			}
+			endGame();
 			return true;
 		}
 		
@@ -524,13 +523,16 @@ public class Asteroid{
 				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<myShip.getBullets()[i].getRad()+radius/2){
 					myShip.getBullets()[i]=null;
 					for(int a=0; a<3; a++){
-						mySpaceField.createDebree(x,y);
+						mySpaceField.createDebree(x,y,radius);
 					}
 					life--;
 				}
 			}
 		}
 		if(life<=0){
+			mySpaceField.spawnMinStroid(x,y);
+			mySpaceField.spawnMinStroid(x,y);
+			mySpaceField.spawnMinStroid(x,y);
 			return true;
 		}
 		return false;
@@ -544,9 +546,9 @@ public class Debree{
 	private double xDir = Math.random()*3-1;
 	private double yDir = Math.random()*3-1;
 	private double x, y;
-	public Debree(double x, double y){
-		this.x=x + Math.random()*30-15;
-		this.y=y + Math.random()*30-15;
+	public Debree(double x, double y, int radius){
+		this.x=x + Math.random()*radius-radius/2;
+		this.y=y + Math.random()*radius-radius/2;
 	}
 	public void drawDebree(){
 		tint(255, opacity);
@@ -564,17 +566,72 @@ public class Debree{
 	}
 }
 
+public class EndStroid{
+	private int life=20;
+	private double x, y;
+	private int radius;
+	private PImage asteroidImage;
+	private String imageName;
+	EndStroid(double x, double y, int radius, String imageName){
+		this.x=x;
+		this.y=y;
+		this.radius=radius;
+		this.imageName = imageName;
+		asteroidImage=loadImage(imageName);
+	}
+	protected void run(){
+		display();
+	}
+	protected void display(){
+		imageMode(CENTER);
+		tint(255, 255);
+		image(asteroidImage, (float)x, (float)y, (int)this.radius, (int)this.radius);
+	}
+	protected boolean collide(){
+		//ship rad is 20!
+		if((dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2) || !gameOver){
+			for(int i=0; i<30; i++){
+				mySpaceField.createDebree(x,y,radius);
+			}
+			if(imageName=="retry.png"){
+				gameOver=false;
+			}
+			return true;
+		}
+		
+		//bullet rad is 6.5
+		for(int i = 0; i<myShip.getBullets().length; i++){
+			if(myShip.getBullets()[i]!=null){
+				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<myShip.getBullets()[i].getRad()+radius/2){
+					myShip.getBullets()[i]=null;
+					for(int a=0; a<3; a++){
+						mySpaceField.createDebree(x,y,radius);
+					}
+					life--;
+				}
+			}
+		}
+		if(life<=0){
+			return true;
+		}
+		return false;
+	}
+}
+
 //Class that holds arrays of objects
 public class SpaceField{
 	private Star[] starHolder;
 	private Asteroid[] asteroidHolder;
 	private Debree[] debreeHolder;
 	private MinAsteroid[] minHolder;
+	private EndStroid[] endHolder;
+	public static final int ASTEROID_NUM = 100;
 	public SpaceField(){
-		minHolder = new MinAsteroid[50];
-		debreeHolder = new Debree[100];
+		endHolder = new EndStroid[3];
+		minHolder = new MinAsteroid[ASTEROID_NUM];
+		debreeHolder = new Debree[ASTEROID_NUM];
 		starHolder = new Star[30];
-		asteroidHolder = new Asteroid[50];
+		asteroidHolder = new Asteroid[ASTEROID_NUM];
 		for(int i=0; i<starHolder.length; i++){
 			starHolder[i] = new Star();
 		}
@@ -601,7 +658,8 @@ public class SpaceField{
 		for(Star aStar : starHolder){
 			aStar.display();
 		}
-		for(int i = 0; i<asteroidHolder.length; i++){
+		for(int i = 0; i<ASTEROID_NUM; i++){
+			//controls large asteroid
 			if(asteroidHolder[i]!=null){
 				asteroidHolder[i].run();
 				if(asteroidHolder[i].timeOut()){
@@ -609,15 +667,12 @@ public class SpaceField{
 				}
 				if(asteroidHolder[i]!=null){
 					if(asteroidHolder[i].collide()){
-						mySpaceField.spawnMinStroid(asteroidHolder[i].x,asteroidHolder[i].y);
-						mySpaceField.spawnMinStroid(asteroidHolder[i].x,asteroidHolder[i].y);
-						mySpaceField.spawnMinStroid(asteroidHolder[i].x,asteroidHolder[i].y);
 						asteroidHolder[i] = null;
 					}
 				}
 			}
-		}
-		for(int i = 0; i<minHolder.length; i++){
+			
+			//controls small asteroids
 			if(minHolder[i]!=null){
 				minHolder[i].run();
 				if(minHolder[i].timeOut()){
@@ -629,8 +684,8 @@ public class SpaceField{
 					}
 				}
 			}
-		}
-		for(int i = 0; i<debreeHolder.length; i++){
+			
+			//controls debree
 			if(debreeHolder[i]!=null){
 				debreeHolder[i].drawDebree();
 				if(debreeHolder[i].timeOut()){
@@ -638,18 +693,38 @@ public class SpaceField{
 				}
 			}
 		}
+		for(int i = 0; i<endHolder.length; i++){
+			if(endHolder[i]!=null){
+				endHolder[i].run();
+				if(endHolder[i].collide()){
+					minHolder[i] = null;
+				}
+			}
+		}
 	}
 	
-	public void createDebree(double x, double y){
+	public void createDebree(double x, double y, int radius){
 		outer: for(int i = 0; i<debreeHolder.length; i++){
 			if(debreeHolder[i] == null){
-				debreeHolder[i] = new Debree(x, y);
+				debreeHolder[i] = new Debree(x, y, radius);
 				break outer;
 			}
 		}
 	}
+	public void endGame(){
+		
+	}
 }
 
+public void endGame(){
+	gameOver=true;
+	myShip.setX(width/2);
+	myShip.setY(height-80);
+	myShip.setPointDirection(270);
+	myShip.setDirectionX(0);
+	myShip.setDirectionY(0);
+	mySpaceField.endGame();
+}
 
 //controls rotation and acceleration key inputs!
 void keyPressed(){
