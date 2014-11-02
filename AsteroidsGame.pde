@@ -2,7 +2,7 @@
 
 SpaceShip myShip;
 SpaceField mySpaceField;
-boolean accelerate, turnCounterClockwise, turnClockwise, decelerate;
+boolean accelerate, turnCounterClockwise, turnClockwise, decelerate, gameOver;
 PImage bullet;
 
 int shootTimer;
@@ -17,38 +17,47 @@ public void setup(){
   bullet=loadImage("bullet.png");
   shootTimer = 100;
   spawnTimer=0;
+  gameOver=false;
 }
 public void draw() {
-	int m = millis();
-	s = second();
-	background(0);
-	mySpaceField.showField();
-	myShip.show(); 
-	myShip.move(); 
-	if (accelerate)
-		myShip.accelerate(myShip.acceleration);
+	if(!gameOver){
+		int m = millis();
+		s = second();
+		background(0);
+		mySpaceField.showField();
+		myShip.show(); 
+		myShip.move(); 
+		if (accelerate)
+			myShip.accelerate(myShip.acceleration);
 
-	if (decelerate)
-		myShip.accelerate(myShip.acceleration*-1);
+		if (decelerate)
+			myShip.accelerate(myShip.acceleration*-1);
 
-	if (turnCounterClockwise)
-		myShip.rotateShip(-5);
+		if (turnCounterClockwise)
+			myShip.rotateShip(-5);
 
-	if (turnClockwise) 
-		myShip.rotateShip(5);
+		if (turnClockwise) 
+			myShip.rotateShip(5);
 
-	if(!accelerate && !decelerate)
-		myShip.notAccelerating();
-  if (mousePressed == true && m>=shootTimer){
-    myShip.shoot();
-	shootTimer=m + 100;
-  }
-  if(s>=spawnTimer){
-	mySpaceField.spawnStroid();
-	spawnTimer=s+1;
-  }
-  if(spawnTimer == 60 && s == 0)
-	spawnTimer = 0;
+		if(!accelerate && !decelerate)
+			myShip.notAccelerating();
+	  if (mousePressed == true && m>=shootTimer){
+		myShip.shoot();
+		shootTimer=m + 100;
+	  }
+	  if(s>=spawnTimer){
+		mySpaceField.spawnStroid();
+		spawnTimer=s+1;
+	  }
+	  if(spawnTimer == 60 && s == 0)
+		spawnTimer = 0;
+    } else {
+		textAlign(CENTER, BOTTOM);
+		textSize(32);
+		fill(0, 0, 0);
+		text("word", 10, 30); 
+
+	}
 }
 
 class aBullet extends Floater{
@@ -397,6 +406,32 @@ public class MinAsteroid extends Asteroid{
 		tint(255, 255);
 		image(asteroidImage, (float)x, (float)y, (int)this.radius, (int)this.radius);
 	}
+	protected boolean collide(){
+		//ship rad is 20!
+		if(dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2){
+			for(int i=0; i<10; i++){
+				mySpaceField.createDebree(x,y);
+			}
+			return true;
+		}
+		
+		//bullet rad is 6.5
+		for(int i = 0; i<myShip.getBullets().length; i++){
+			if(myShip.getBullets()[i]!=null){
+				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<myShip.getBullets()[i].getRad()+radius/2){
+					myShip.getBullets()[i]=null;
+					for(int a=0; a<3; a++){
+						mySpaceField.createDebree(x,y);
+					}
+					life--;
+				}
+			}
+		}
+		if(life<=0){
+			return true;
+		}
+		return false;
+	}
 }
 
 public class Asteroid{
@@ -475,9 +510,11 @@ public class Asteroid{
 		return false;
 	}
 	protected boolean collide(){
-		
 		//ship rad is 20!
 		if(dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2){
+			for(int i=0; i<10; i++){
+				mySpaceField.createDebree(x,y);
+			}
 			return true;
 		}
 		
@@ -486,9 +523,9 @@ public class Asteroid{
 			if(myShip.getBullets()[i]!=null){
 				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<myShip.getBullets()[i].getRad()+radius/2){
 					myShip.getBullets()[i]=null;
-					mySpaceField.createDebree(x,y);
-					mySpaceField.createDebree(x,y);
-					mySpaceField.createDebree(x,y);
+					for(int a=0; a<3; a++){
+						mySpaceField.createDebree(x,y);
+					}
 					life--;
 				}
 			}
