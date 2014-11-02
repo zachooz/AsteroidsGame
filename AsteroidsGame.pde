@@ -460,6 +460,13 @@ public class Asteroid{
 		setPos();
 		makeDirection(x, y);
 	}
+	public void setX(double x){
+		this.x=x;
+	}
+	public void setY(double y){
+		this.y=y;
+	}
+	
 	protected void setPos(){
 		int ran = (int)(Math.random()*4);
 		if(ran==0){
@@ -611,8 +618,9 @@ public class EndStroid{
 			for(int i=0; i<30; i++){
 				mySpaceField.createDebree(x,y,radius);
 			}
-			for(int i=0;i<5;i++){
+			for(int i=0;i<2;i++){
 				mySpaceField.spawnMinStroid(x,y);
+				mySpaceField.posSpawnStroid(x,y);
 			}
 			if(imageName=="retry.png"){
 				gameOver=false;
@@ -633,8 +641,9 @@ public class EndStroid{
 			}
 		}
 		if(life<=0){
-			for(int i=0;i<5;i++){
+			for(int i=0;i<2;i++){
 				mySpaceField.spawnMinStroid(x,y);
+				mySpaceField.posSpawnStroid(x,y);
 			}
 			if(imageName=="retry.png"){
 				gameOver=false;
@@ -668,6 +677,16 @@ public class SpaceField{
 		outer: for(int i = 0; i<asteroidHolder.length; i++){
 			if(asteroidHolder[i] == null){
 				asteroidHolder[i] = new Asteroid();
+				break outer;
+			}
+		}
+	}
+	public void posSpawnStroid(double x, double y){
+		outer: for(int i = 0; i<asteroidHolder.length; i++){
+			if(asteroidHolder[i] == null){
+				asteroidHolder[i] = new Asteroid();
+				asteroidHolder[i].setX(x);
+				asteroidHolder[i].setY(y);
 				break outer;
 			}
 		}
