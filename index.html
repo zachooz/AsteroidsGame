@@ -7,8 +7,23 @@
 		<link rel="stylesheet" href="styles.css">
 		<script src="processing.js"></script>
 		<embed src="rage.mp3" autostart="true" loop="true" hidden="true">
+		<script src="buzz.min.js"></script>
+		<script>
+			var play = false;
+			var s1 = new buzz.sound( "pew.mp3", {formats: [ "ogg", "mp3", "aac" ]});
+			function changePlay(){
+				if(play){
+					play=false;
+				} else {
+					play=true;
+				}
+			}
+			setInterval(function(){
+				if(play){s1.play();}
+			}, 1000);
+		</script>
 	</head>
-	<body>
+	<body onmousedown="changePlay()" onmouseup="changePlay()">
 		<div class = 'page-wrap'>
 			<header>
 				<h1>Asteroids</h1>
