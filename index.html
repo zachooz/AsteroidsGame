@@ -10,7 +10,7 @@
 		<script src="buzz.min.js"></script>
 		<script>
 			var play = false;
-			var s1 = new buzz.sound( "pew", {formats: [ "ogg", "mp3", "aac" ]});
+			var s1 = new buzz.sound( "pew", {formats: [ "mp3", "ogg", "aac" ]});
 			function changePlay(){
 				if(play){
 					play=false;
@@ -20,7 +20,7 @@
 			}
 			setInterval(function(){
 				if(play){s1.play();}
-			}, 1000);
+			}, 50);
 		</script>
 	</head>
 	<body onmousedown="changePlay()" onmouseup="changePlay()">
