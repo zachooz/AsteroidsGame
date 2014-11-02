@@ -3,6 +3,8 @@ import processing.data.*;
 import processing.event.*; 
 import processing.opengl.*; 
 
+import ddf.minim.*; 
+
 import java.util.HashMap; 
 import java.util.ArrayList; 
 import java.io.File; 
@@ -16,6 +18,11 @@ public class AsteroidsGame extends PApplet {
 
 /* @pjs preload="ship.png, asteroid.png, shipBackward.png, shipForward.png, star1.png, bullet.png, debree.png, game.png, over.png, retry.png;*/
 
+
+Minim minim;
+AudioPlayer player;
+AudioInput input;
+
 SpaceShip myShip;
 SpaceField mySpaceField;
 boolean accelerate, turnCounterClockwise, turnClockwise, decelerate, gameOver;
@@ -26,7 +33,6 @@ int spawnTimer;
 int s;
 //your variable declarations here
 public void setup(){
-  //your code here
   size(700,700);
   myShip =  new SpaceShip();
   mySpaceField = new SpaceField();
@@ -34,7 +40,13 @@ public void setup(){
   shootTimer = 100;
   spawnTimer=0;
   gameOver=false;
+  
+  //music
+  minim = new Minim(this);
+  player = minim.loadFile("pew.mp3");
+  input = minim.getLineIn();
 }
+
 public void draw() {
 	int m = millis();
 	s = second();
@@ -58,6 +70,9 @@ public void draw() {
 	if(!accelerate && !decelerate)
 		myShip.notAccelerating();
 	if (mousePressed == true && m>=shootTimer){
+		player.play();
+		player = minim.loadFile("pew.mp3");	
+	
 		myShip.shoot();
 		shootTimer=m + 100;
 	}
