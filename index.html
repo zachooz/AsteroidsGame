@@ -7,6 +7,18 @@
 		<link rel="stylesheet" href="styles.css">
 		<script src="processing.js"></script>
 		<embed src="rage.mp3" autostart="true" loop="true" hidden="true">
+		<script src="../script/soundmanager2.js"></script>
+		<script>
+		soundManager.setup({
+		  url: '../swf/',
+		  onready: function() {
+			var shoot = soundManager.createSound({
+			  id: 'pew',
+			  url: 'pew.mp3'
+			});
+		  },
+		});
+		</script>
 	</head>
 	<body>
 		<div class = 'page-wrap'>
