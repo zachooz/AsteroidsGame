@@ -60,7 +60,7 @@ public void draw() {
 		player.play();
 		player = minim.loadFile("pew.mp3");	
 		*/
-		shoot.play();
+		soundManager.shoot.play();
 		myShip.shoot();
 		shootTimer=m + 100;
 	}
