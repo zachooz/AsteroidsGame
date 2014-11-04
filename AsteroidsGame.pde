@@ -52,13 +52,13 @@ public void draw() {
 
 	if (decelerate)
 		myShip.accelerate(myShip.acceleration*-1);
-
+  /* USED TO CHANGE ROT WITH KEYS
 	if (turnCounterClockwise)
 		myShip.rotateShip(-5);
 
 	if (turnClockwise) 
 		myShip.rotateShip(5);
-
+  */
 	if(!accelerate && !decelerate)
 		myShip.notAccelerating();
 	if (mousePressed == true && m>=shootTimer){
@@ -131,7 +131,7 @@ class aBullet extends Floater{
   }
   public void accelerate(double dAmount){     
     //convert the current direction the floater is pointing to radians    
-    dRadians =myPointDirection*(Math.PI/180);     
+    dRadians =myPointDirection*(Math.PI/180);   
     //change coordinates of direction of travel 
         myDirectionX += ((dAmount) * Math.cos(dRadians)); 
         myDirectionY += ((dAmount) * Math.sin(dRadians));
@@ -161,6 +161,7 @@ class SpaceShip extends Floater{
   private int bulletNum;
   private int mySize = 50;
   private int rad = mySize/2 - 5;
+  private double dRadians;
   public SpaceShip(){
     acceleration=.3;   
     myCenterX=width/2;
@@ -168,10 +169,14 @@ class SpaceShip extends Floater{
     myDirectionX=0;
     myDirectionY=0;
     myPointDirection=0;
-	ship=loadImage("ship.png");
+	  ship=loadImage("ship.png");
     currentImage="ship.png";
     bulletHolder = new aBullet[50];
     bulletNum = 0;
+    dRadians = Math.asin((mouseY-myCenterY)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
+    if((mouseX-myCenterX)<0){
+      dRadians=Math.PI-dRadians;
+    }
   } 
   public int getRad(){
     return (int) (rad);
@@ -210,9 +215,7 @@ class SpaceShip extends Floater{
     return myPointDirection;
   }
   public void accelerate(double dAmount){
-	int maxSpeed = 10;
-    //convert the current direction the floater is pointing to radians    
-    double dRadians =myPointDirection*(Math.PI/180);     
+    int maxSpeed = 10;
     //change coordinates of direction of travel 
     myDirectionX += ((dAmount) * Math.cos(dRadians)); 
     myDirectionY += ((dAmount) * Math.sin(dRadians));
@@ -263,7 +266,7 @@ class SpaceShip extends Floater{
     }
   }
   public void shoot(){
-    double dRadians =myPointDirection*(Math.PI/180); 
+    myPointDirection=dRadians*(190/Math.PI);
     if(bulletNum>=bulletHolder.length)
       bulletNum=0;
 
@@ -279,7 +282,10 @@ class SpaceShip extends Floater{
   }
   public void show(){  //Draws the floater at the current position      
     //convert degrees to radians for sin and cos         
-    double dRadians = myPointDirection*(Math.PI/180);  
+    dRadians = Math.asin((mouseY-myCenterY)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
+    if((mouseX-myCenterX)<0){
+      dRadians=Math.PI-dRadians;
+    }
 	   pushMatrix();
 		    imageMode(CENTER);
 		    translate((float)myCenterX,(float)myCenterY);
