@@ -58,10 +58,10 @@ public void draw() {
 	mySpaceField.showField();
 	myShip.show(); 
 	myShip.move();
-	
+	textAlign(RIGHT);
 	textSize(32);
 	fill(255, 255, 255);
-	text("Score: " + score, width-150, 50); 
+	text("Score: " + score, width-10, 50); 
  
 	if (accelerate)
 		myShip.accelerate(myShip.acceleration);
