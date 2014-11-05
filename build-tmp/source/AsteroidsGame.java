@@ -808,19 +808,19 @@ public void endGame(){
 
 //controls rotation and acceleration key inputs!
 public void keyPressed(){
-	if (keyCode == UP || key == 'w') {
+	if (keyCode == UP || key == 'w' || key == 'W') {
 		accelerate=true;
 	} 
 
-	if (keyCode == DOWN || key == 's') {
+	if (keyCode == DOWN || key == 's' || key == 'S') {
 		decelerate=true;
 	} 
 
-	if (keyCode == LEFT || key == 'a') {
+	if (keyCode == LEFT || key == 'a' || key == 'A') {
 		turnCounterClockwise=true;
 	} 
 
-	if (keyCode == RIGHT || key == 'd') {
+	if (keyCode == RIGHT || key == 'd' || key == 'D') {
 		turnClockwise=true;
 	} 
 
@@ -829,19 +829,19 @@ public void keyPressed(){
 	}
 }
 public void keyReleased() {
-	if (keyCode == UP || key == 'w') {
+	if (keyCode == UP || key == 'w' || key == 'W') {
 		accelerate=false;
 	} 
 
-	if (keyCode == DOWN || key == 's') {
+	if (keyCode == DOWN || key == 's' || key == 'S') {
 		decelerate=false;
 	} 
 
-	if (keyCode == LEFT || key == 'a') {
+	if (keyCode == LEFT || key == 'a'|| key == 'A') {
 		turnCounterClockwise=false;
 	} 
 
-	if (keyCode == RIGHT || key == 'd') {
+	if (keyCode == RIGHT || key == 'd'|| key == 'D') {
 		turnClockwise=false;
 	} 
 
