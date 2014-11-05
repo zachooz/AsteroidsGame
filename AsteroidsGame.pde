@@ -7,15 +7,15 @@ AudioPlayer player;
 AudioInput input;
 */
 
-SpaceShip myShip;
-SpaceField mySpaceField;
-boolean accelerate, turnCounterClockwise, turnClockwise, decelerate, gameOver;
-PImage bullet;
+private SpaceShip myShip;
+private SpaceField mySpaceField;
+private boolean accelerate, turnCounterClockwise, turnClockwise, decelerate, gameOver;
+private PImage bullet;
 
-int shootTimer;
-int spawnTimer;
-int s;
-int score;
+private int shootTimer;
+private int spawnTimer;
+private int s;
+private int score;
 //your variable declarations here
 public void setup(){
   size(700,700);
@@ -87,12 +87,11 @@ class aBullet extends Floater{
   private String currentBullet;
   private double speed;
   private double dRadians;
-  public aBullet(double myPointDirection, double myCenterX, double myCenterY){
+  public aBullet(double dRadians, double myCenterX, double myCenterY){
     speed = 15;  
-    this.myPointDirection = myPointDirection;
+    this.dRadians = dRadians;
     this.myCenterX=myCenterX;
     this.myCenterY=myCenterY;   
-    dRadians =myPointDirection*(Math.PI/180);
     this.myDirectionX =  ((speed) * Math.cos(dRadians)); 
     this.myDirectionY = ((speed) * Math.sin(dRadians));
   } 
@@ -137,8 +136,6 @@ class aBullet extends Floater{
         myDirectionY += ((dAmount) * Math.sin(dRadians));
   } 
   public void show(){  //Draws the floater at the current position    
-    //convert degrees to radians for sin and cos         
-    double dRadians = myPointDirection*(Math.PI/180); 
      pushMatrix();
         imageMode(CENTER);
         translate((float)myCenterX,(float)myCenterY);
@@ -275,16 +272,16 @@ class SpaceShip extends Floater{
 
     double theX2= myCenterX + ((25) * Math.cos(dRadians-Math.PI/8));
     double theY2 = myCenterY + ((25) * Math.sin(dRadians-Math.PI/8));
-    bulletHolder[bulletNum]=new aBullet(myPointDirection, theX1, theY1);
+    bulletHolder[bulletNum]=new aBullet(dRadians, theX1, theY1);
     bulletNum++;
-    bulletHolder[bulletNum]=new aBullet(myPointDirection, theX2, theY2);
+    bulletHolder[bulletNum]=new aBullet(dRadians, theX2, theY2);
     bulletNum++;
   }
   public void show(){  //Draws the floater at the current position      
     //convert degrees to radians for sin and cos         
-    dRadians = Math.asin((mouseY-myCenterY)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
-    if((mouseX-myCenterX)<0){
-      dRadians=Math.PI-dRadians;
+    dRadians = Math.acos((mouseX-myCenterX)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
+    if((mouseY-myCenterY)<0){
+      dRadians*=-1;
     }
 	   pushMatrix();
 		    imageMode(CENTER);
