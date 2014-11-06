@@ -23,21 +23,21 @@ AudioPlayer player;
 AudioInput input;
 */
 
-SpaceShip myShip;
-SpaceField mySpaceField;
-boolean accelerate, turnCounterClockwise, turnClockwise, decelerate, gameOver;
-PImage bullet;
+private SpaceShip myShip;
+private SpaceField mySpaceField;
+private boolean accelerate, turnCounterClockwise, turnClockwise, decelerate, gameOver;
+private PImage bullet;
 
-int shootTimer;
-int spawnTimer;
-int s;
-int score;
+private int shootTimer;
+private int spawnTimer;
+private int s;
+private int score;
 //your variable declarations here
 public void setup(){
   size(700,700);
   myShip =  new SpaceShip();
   mySpaceField = new SpaceField();
-  bullet=loadImage("bullet.png");
+  bullet=loadImage("Sprites/bullet.png");
   shootTimer = 100;
   spawnTimer=0;
   gameOver=false;
@@ -58,23 +58,23 @@ public void draw() {
 	mySpaceField.showField();
 	myShip.show(); 
 	myShip.move();
-	
+	textAlign(RIGHT);
 	textSize(32);
 	fill(255, 255, 255);
-	text("Score: " + score, width-150, 50); 
+	text("Score: " + score, width-10, 50); 
  
 	if (accelerate)
 		myShip.accelerate(myShip.acceleration);
 
 	if (decelerate)
 		myShip.accelerate(myShip.acceleration*-1);
-
+  /* USED TO CHANGE ROT WITH KEYS
 	if (turnCounterClockwise)
 		myShip.rotateShip(-5);
 
 	if (turnClockwise) 
 		myShip.rotateShip(5);
-
+  */
 	if(!accelerate && !decelerate)
 		myShip.notAccelerating();
 	if (mousePressed == true && m>=shootTimer){
@@ -103,12 +103,11 @@ class aBullet extends Floater{
   private String currentBullet;
   private double speed;
   private double dRadians;
-  public aBullet(double myPointDirection, double myCenterX, double myCenterY){
+  public aBullet(double dRadians, double myCenterX, double myCenterY){
     speed = 15;  
-    this.myPointDirection = myPointDirection;
+    this.dRadians = dRadians;
     this.myCenterX=myCenterX;
     this.myCenterY=myCenterY;   
-    dRadians =myPointDirection*(Math.PI/180);
     this.myDirectionX =  ((speed) * Math.cos(dRadians)); 
     this.myDirectionY = ((speed) * Math.sin(dRadians));
   } 
@@ -147,14 +146,12 @@ class aBullet extends Floater{
   }
   public void accelerate(double dAmount){     
     //convert the current direction the floater is pointing to radians    
-    dRadians =myPointDirection*(Math.PI/180);     
+    dRadians =myPointDirection*(Math.PI/180);   
     //change coordinates of direction of travel 
         myDirectionX += ((dAmount) * Math.cos(dRadians)); 
         myDirectionY += ((dAmount) * Math.sin(dRadians));
   } 
   public void show(){  //Draws the floater at the current position    
-    //convert degrees to radians for sin and cos         
-    double dRadians = myPointDirection*(Math.PI/180); 
      pushMatrix();
         imageMode(CENTER);
         translate((float)myCenterX,(float)myCenterY);
@@ -177,6 +174,7 @@ class SpaceShip extends Floater{
   private int bulletNum;
   private int mySize = 50;
   private int rad = mySize/2 - 5;
+  private double dRadians;
   public SpaceShip(){
     acceleration=.3f;   
     myCenterX=width/2;
@@ -184,10 +182,14 @@ class SpaceShip extends Floater{
     myDirectionX=0;
     myDirectionY=0;
     myPointDirection=0;
-	ship=loadImage("ship.png");
-    currentImage="ship.png";
+	  ship=loadImage("Sprites/ship.png");
+    currentImage="Sprites/ship.png";
     bulletHolder = new aBullet[50];
     bulletNum = 0;
+    dRadians = Math.asin((mouseY-myCenterY)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
+    if((mouseX-myCenterX)<0){
+      dRadians=Math.PI-dRadians;
+    }
   } 
   public int getRad(){
     return (int) (rad);
@@ -226,9 +228,7 @@ class SpaceShip extends Floater{
     return myPointDirection;
   }
   public void accelerate(double dAmount){
-	int maxSpeed = 10;
-    //convert the current direction the floater is pointing to radians    
-    double dRadians =myPointDirection*(Math.PI/180);     
+    int maxSpeed = 10;
     //change coordinates of direction of travel 
     myDirectionX += ((dAmount) * Math.cos(dRadians)); 
     myDirectionY += ((dAmount) * Math.sin(dRadians));
@@ -242,15 +242,15 @@ class SpaceShip extends Floater{
 	if(myDirectionY < -1 * maxSpeed)
 		myDirectionY = -1 * maxSpeed;
   	if(dAmount>0){
-  		currentImage="shipForward.png"; //change image due to acceleration
+  		currentImage="Sprites/shipForward.png"; //change image due to acceleration
   	} else {
-  		currentImage="shipBackward.png";
+  		currentImage="Sprites/shipBackward.png";
   	}
   } 
   
   public void notAccelerating(){
-  	if(currentImage!="ship.png"){
-  		currentImage="ship.png";
+  	if(currentImage!="Sprites/ship.png"){
+  		currentImage="Sprites/ship.png";
   	}
   }
   public void move(){   //move the floater in the current direction of travel
@@ -279,7 +279,7 @@ class SpaceShip extends Floater{
     }
   }
   public void shoot(){
-    double dRadians =myPointDirection*(Math.PI/180); 
+    myPointDirection=dRadians*(190/Math.PI);
     if(bulletNum>=bulletHolder.length)
       bulletNum=0;
 
@@ -288,14 +288,17 @@ class SpaceShip extends Floater{
 
     double theX2= myCenterX + ((25) * Math.cos(dRadians-Math.PI/8));
     double theY2 = myCenterY + ((25) * Math.sin(dRadians-Math.PI/8));
-    bulletHolder[bulletNum]=new aBullet(myPointDirection, theX1, theY1);
+    bulletHolder[bulletNum]=new aBullet(dRadians, theX1, theY1);
     bulletNum++;
-    bulletHolder[bulletNum]=new aBullet(myPointDirection, theX2, theY2);
+    bulletHolder[bulletNum]=new aBullet(dRadians, theX2, theY2);
     bulletNum++;
   }
   public void show(){  //Draws the floater at the current position      
     //convert degrees to radians for sin and cos         
-    double dRadians = myPointDirection*(Math.PI/180);  
+    dRadians = Math.acos((mouseX-myCenterX)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
+    if((mouseY-myCenterY)<0){
+      dRadians*=-1;
+    }
 	   pushMatrix();
 		    imageMode(CENTER);
 		    translate((float)myCenterX,(float)myCenterY);
@@ -382,7 +385,7 @@ public class Star{
 	private String fadeMode;
 	public Star(){
 		//sets the star image
-		starImage=loadImage("star1.png");
+		starImage=loadImage("Sprites/star1.png");
 		
 		//sets a random position on the screen for the stars
 		x = (int) (Math.random()*width);
@@ -476,7 +479,7 @@ public class MinAsteroid extends Asteroid{
 public class Asteroid{
 	private int radius=70;
 	protected double x, y, directionX, directionY;
-	protected PImage asteroidImage=loadImage("asteroid.png");
+	protected PImage asteroidImage=loadImage("Sprites/asteroid.png");
 	protected double lifeTime = 20;
 	protected int life=5;
 	public Asteroid(){
@@ -589,7 +592,7 @@ public class Asteroid{
 }
 
 public class Debree{
-	private PImage debreeImage=loadImage("debree.png");
+	private PImage debreeImage=loadImage("Sprites/debree.png");
 	private int radius = 10;
 	private int opacity = 255;
 	private double xDir = Math.random()*3-1;
@@ -646,7 +649,7 @@ public class EndStroid{
 				mySpaceField.spawnMinStroid(x,y);
 				mySpaceField.posSpawnStroid(x,y);
 			}
-			if(imageName=="retry.png"){
+			if(imageName=="Sprites/retry.png"){
 				gameOver=false;
 				score=0;
 			}
@@ -661,7 +664,7 @@ public class EndStroid{
 					for(int a=0; a<3; a++){
 						mySpaceField.createDebree(x,y,radius);
 					}
-					if(imageName=="retry.png"){
+					if(imageName=="Sprites/retry.png"){
 						life--;
 					}
 				}
@@ -672,7 +675,7 @@ public class EndStroid{
 				mySpaceField.spawnMinStroid(x,y);
 				mySpaceField.posSpawnStroid(x,y);
 			}
-			if(imageName=="retry.png"){
+			if(imageName=="Sprites/retry.png"){
 				gameOver=false;
 				score=0;
 			}
@@ -787,9 +790,9 @@ public class SpaceField{
 	}
 	public void endGame(){
 		//EndStroid(double x, double y, int radius, String imageName
-		endHolder[0]=new EndStroid(width*2/5, height*1/5, 100, "game.png");
-		endHolder[1]=new EndStroid(width*3/5, height*1/5, 100, "over.png");
-		endHolder[2]=new EndStroid(width/2, height*3/5, 200, "retry.png");
+		endHolder[0]=new EndStroid(width*2/5, height*1/5, 100, "Sprites/game.png");
+		endHolder[1]=new EndStroid(width*3/5, height*1/5, 100, "Sprites/over.png");
+		endHolder[2]=new EndStroid(width/2, height*3/5, 200, "Sprites/retry.png");
 	}
 }
 
