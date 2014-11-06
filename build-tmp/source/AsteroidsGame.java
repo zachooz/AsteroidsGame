@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class AsteroidsGame extends PApplet {
 
-/* @pjs preload="ship.png, asteroid.png, shipBackward.png, shipForward.png, star1.png, bullet.png, debree.png, game.png, over.png, retry.png;*/
+/* @pjs preload="Sprites/ship.png, Sprites/asteroid.png, Sprites/shipBackward.png, Sprites/shipForward.png, Sprites/star1.png, Sprites/bullet.png, Sprites/debree.png, Sprites/game.png, Sprites/over.png, Sprites/retry.png, Sprites/1.png, Sprites/2.png, Sprites/3.png, Sprites/4.png, Sprites/5.png, , Sprites/6.png, Sprites/7.png, Sprites/8.png, Sprites/9.png;*/
 /* MINIM DOESNT WORK ONLINE
 import ddf.minim.*;
 
@@ -37,13 +37,13 @@ public void setup(){
   size(700,700);
   myShip =  new SpaceShip();
   mySpaceField = new SpaceField();
-  bullet=loadImage("bullet.png");
+  bullet=loadImage("Sprites/bullet.png");
   shootTimer = 100;
   spawnTimer=0;
   gameOver=false;
   score = 0;
   //music
-  /*
+  /* MINIM DOESNT WORK ONLINE
   minim = new Minim(this);
   player = minim.loadFile("pew.mp3");
   input = minim.getLineIn();
@@ -64,10 +64,10 @@ public void draw() {
 	text("Score: " + score, width-10, 50); 
  
 	if (accelerate)
-		myShip.accelerate(myShip.acceleration);
+		myShip.accelerate(myShip.ACCELLERATION);
 
 	if (decelerate)
-		myShip.accelerate(myShip.acceleration*-1);
+		myShip.accelerate(myShip.ACCELLERATION*-1);
   /* USED TO CHANGE ROT WITH KEYS
 	if (turnCounterClockwise)
 		myShip.rotateShip(-5);
@@ -166,8 +166,8 @@ class aBullet extends Floater{
     myCenterY += myDirectionY;       
   } 
 }
-class SpaceShip extends Floater{
-  public float acceleration;
+public class SpaceShip extends Floater{
+  public final static float ACCELLERATION=.3f;
   private PImage ship;
   private String currentImage;
   private aBullet[] bulletHolder;
@@ -175,15 +175,14 @@ class SpaceShip extends Floater{
   private int mySize = 50;
   private int rad = mySize/2 - 5;
   private double dRadians;
-  public SpaceShip(){
-    acceleration=.3f;   
+  public SpaceShip(){   
     myCenterX=width/2;
     myCenterY=height/2;  
     myDirectionX=0;
     myDirectionY=0;
     myPointDirection=0;
-	  ship=loadImage("ship.png");
-    currentImage="ship.png";
+	  ship=loadImage("Sprites/ship.png");
+    currentImage="Sprites/ship.png";
     bulletHolder = new aBullet[50];
     bulletNum = 0;
     dRadians = Math.asin((mouseY-myCenterY)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
@@ -242,15 +241,15 @@ class SpaceShip extends Floater{
 	if(myDirectionY < -1 * maxSpeed)
 		myDirectionY = -1 * maxSpeed;
   	if(dAmount>0){
-  		currentImage="shipForward.png"; //change image due to acceleration
+  		currentImage="Sprites/shipForward.png"; //change image due to acceleration
   	} else {
-  		currentImage="shipBackward.png";
+  		currentImage="Sprites/shipBackward.png";
   	}
   } 
   
   public void notAccelerating(){
-  	if(currentImage!="ship.png"){
-  		currentImage="ship.png";
+  	if(currentImage!="Sprites/ship.png"){
+  		currentImage="Sprites/ship.png";
   	}
   }
   public void move(){   //move the floater in the current direction of travel
@@ -385,7 +384,7 @@ public class Star{
 	private String fadeMode;
 	public Star(){
 		//sets the star image
-		starImage=loadImage("star1.png");
+		starImage=loadImage("Sprites/star1.png");
 		
 		//sets a random position on the screen for the stars
 		x = (int) (Math.random()*width);
@@ -479,7 +478,7 @@ public class MinAsteroid extends Asteroid{
 public class Asteroid{
 	private int radius=70;
 	protected double x, y, directionX, directionY;
-	protected PImage asteroidImage=loadImage("asteroid.png");
+	protected PImage asteroidImage=loadImage("Sprites/asteroid.png");
 	protected double lifeTime = 20;
 	protected int life=5;
 	public Asteroid(){
@@ -592,7 +591,7 @@ public class Asteroid{
 }
 
 public class Debree{
-	private PImage debreeImage=loadImage("debree.png");
+	private PImage debreeImage=loadImage("Sprites/debree.png");
 	private int radius = 10;
 	private int opacity = 255;
 	private double xDir = Math.random()*3-1;
@@ -649,7 +648,7 @@ public class EndStroid{
 				mySpaceField.spawnMinStroid(x,y);
 				mySpaceField.posSpawnStroid(x,y);
 			}
-			if(imageName=="retry.png"){
+			if(imageName=="Sprites/retry.png"){
 				gameOver=false;
 				score=0;
 			}
@@ -664,7 +663,7 @@ public class EndStroid{
 					for(int a=0; a<3; a++){
 						mySpaceField.createDebree(x,y,radius);
 					}
-					if(imageName=="retry.png"){
+					if(imageName=="Sprites/retry.png"){
 						life--;
 					}
 				}
@@ -675,7 +674,7 @@ public class EndStroid{
 				mySpaceField.spawnMinStroid(x,y);
 				mySpaceField.posSpawnStroid(x,y);
 			}
-			if(imageName=="retry.png"){
+			if(imageName=="Sprites/retry.png"){
 				gameOver=false;
 				score=0;
 			}
@@ -790,9 +789,9 @@ public class SpaceField{
 	}
 	public void endGame(){
 		//EndStroid(double x, double y, int radius, String imageName
-		endHolder[0]=new EndStroid(width*2/5, height*1/5, 100, "game.png");
-		endHolder[1]=new EndStroid(width*3/5, height*1/5, 100, "over.png");
-		endHolder[2]=new EndStroid(width/2, height*3/5, 200, "retry.png");
+		endHolder[0]=new EndStroid(width*2/5, height*1/5, 100, "Sprites/game.png");
+		endHolder[1]=new EndStroid(width*3/5, height*1/5, 100, "Sprites/over.png");
+		endHolder[2]=new EndStroid(width/2, height*3/5, 200, "Sprites/retry.png");
 	}
 }
 

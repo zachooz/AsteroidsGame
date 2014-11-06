@@ -1,4 +1,4 @@
-/* @pjs preload="Sprites/ship.png, Sprites/asteroid.png, Sprites/shipBackward.png, Sprites/shipForward.png, Sprites/star1.png, Sprites/bullet.png, Sprites/debree.png, Sprites/game.png, Sprites/over.png, Sprites/retry.png;*/
+/* @pjs preload="Sprites/ship.png, Sprites/asteroid.png, Sprites/shipBackward.png, Sprites/shipForward.png, Sprites/star1.png, Sprites/bullet.png, Sprites/debree.png, Sprites/game.png, Sprites/over.png, Sprites/retry.png, Sprites/1.png, Sprites/2.png, Sprites/3.png, Sprites/4.png, Sprites/5.png, , Sprites/6.png, Sprites/7.png, Sprites/8.png, Sprites/9.png;*/
 /* MINIM DOESNT WORK ONLINE
 import ddf.minim.*;
 
@@ -27,7 +27,7 @@ public void setup(){
   gameOver=false;
   score = 0;
   //music
-  /*
+  /* MINIM DOESNT WORK ONLINE
   minim = new Minim(this);
   player = minim.loadFile("pew.mp3");
   input = minim.getLineIn();
@@ -48,10 +48,10 @@ public void draw() {
 	text("Score: " + score, width-10, 50); 
  
 	if (accelerate)
-		myShip.accelerate(myShip.acceleration);
+		myShip.accelerate(myShip.ACCELLERATION);
 
 	if (decelerate)
-		myShip.accelerate(myShip.acceleration*-1);
+		myShip.accelerate(myShip.ACCELLERATION*-1);
   /* USED TO CHANGE ROT WITH KEYS
 	if (turnCounterClockwise)
 		myShip.rotateShip(-5);
@@ -150,8 +150,8 @@ class aBullet extends Floater{
     myCenterY += myDirectionY;       
   } 
 }
-class SpaceShip extends Floater{
-  public float acceleration;
+public class SpaceShip extends Floater{
+  public final static float ACCELLERATION=.3;
   private PImage ship;
   private String currentImage;
   private aBullet[] bulletHolder;
@@ -159,8 +159,7 @@ class SpaceShip extends Floater{
   private int mySize = 50;
   private int rad = mySize/2 - 5;
   private double dRadians;
-  public SpaceShip(){
-    acceleration=.3;   
+  public SpaceShip(){   
     myCenterX=width/2;
     myCenterY=height/2;  
     myDirectionX=0;
