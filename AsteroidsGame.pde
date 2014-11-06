@@ -1,4 +1,4 @@
-/* @pjs preload="ship.png, asteroid.png, shipBackward.png, shipForward.png, star1.png, bullet.png, debree.png, game.png, over.png, retry.png;*/
+/* @pjs preload="Sprites/ship.png, Sprites/asteroid.png, Sprites/shipBackward.png, Sprites/shipForward.png, Sprites/star1.png, Sprites/bullet.png, Sprites/debree.png, Sprites/game.png, Sprites/over.png, Sprites/retry.png;*/
 /* MINIM DOESNT WORK ONLINE
 import ddf.minim.*;
 
