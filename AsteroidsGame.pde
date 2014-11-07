@@ -1,7 +1,6 @@
-/* @pjs preload="Sprites/ship.png, Sprites/asteroid.png, Sprites/shipBackward.png, Sprites/shipForward.png, Sprites/star1.png, Sprites/bullet.png, Sprites/debree.png, Sprites/game.png, Sprites/over.png, Sprites/retry.png, Sprites/1.png, Sprites/2.png, Sprites/3.png, Sprites/4.png, Sprites/5.png, , Sprites/6.png, Sprites/7.png, Sprites/8.png, Sprites/9.png;*/
+/* @pjs preload="Sprites/ship.png, Sprites/asteroid.png, Sprites/shipBackward.png, Sprites/shipForward.png, Sprites/star1.png, Sprites/bullet.png, Sprites/debree.png, Sprites/game.png, Sprites/over.png, Sprites/retry.png;*/
 /* MINIM DOESNT WORK ONLINE
 import ddf.minim.*;
-
 Minim minim;
 AudioPlayer player;
 AudioInput input;
@@ -27,7 +26,7 @@ public void setup(){
   gameOver=false;
   score = 0;
   //music
-  /* MINIM DOESNT WORK ONLINE
+  /*
   minim = new Minim(this);
   player = minim.loadFile("pew.mp3");
   input = minim.getLineIn();
@@ -48,14 +47,13 @@ public void draw() {
 	text("Score: " + score, width-10, 50); 
  
 	if (accelerate)
-		myShip.accelerate(myShip.ACCELLERATION);
+		myShip.accelerate(myShip.acceleration);
 
 	if (decelerate)
-		myShip.accelerate(myShip.ACCELLERATION*-1);
+		myShip.accelerate(myShip.acceleration*-1);
   /* USED TO CHANGE ROT WITH KEYS
 	if (turnCounterClockwise)
 		myShip.rotateShip(-5);
-
 	if (turnClockwise) 
 		myShip.rotateShip(5);
   */
@@ -150,20 +148,17 @@ class aBullet extends Floater{
     myCenterY += myDirectionY;       
   } 
 }
-public class SpaceShip extends Floater{
-  public float ACCELLERATION=.3;
+class SpaceShip extends Floater{
+  public float acceleration;
   private PImage ship;
-  private PImage[] explosion;
   private String currentImage;
   private aBullet[] bulletHolder;
   private int bulletNum;
   private int mySize = 50;
   private int rad = mySize/2 - 5;
   private double dRadians;
-  public SpaceShip(){  
-  	explosion = new PImage[10];
-  	for(int i=0; i<explosion.length; i++)
-  		explosion[i] = loadImage("Sprites/"+i+".png"); 
+  public SpaceShip(){
+    acceleration=.3;   
     myCenterX=width/2;
     myCenterY=height/2;  
     myDirectionX=0;
@@ -795,19 +790,19 @@ public void endGame(){
 
 //controls rotation and acceleration key inputs!
 void keyPressed(){
-	if (keyCode == UP || key == 'w' || key == 'W') {
+	if (keyCode == UP || key == 'w') {
 		accelerate=true;
 	} 
 
-	if (keyCode == DOWN || key == 's' || key == 'S') {
+	if (keyCode == DOWN || key == 's') {
 		decelerate=true;
 	} 
 
-	if (keyCode == LEFT || key == 'a' || key == 'A') {
+	if (keyCode == LEFT || key == 'a') {
 		turnCounterClockwise=true;
 	} 
 
-	if (keyCode == RIGHT || key == 'd' || key == 'D') {
+	if (keyCode == RIGHT || key == 'd') {
 		turnClockwise=true;
 	} 
 
@@ -816,19 +811,19 @@ void keyPressed(){
 	}
 }
 void keyReleased() {
-	if (keyCode == UP || key == 'w' || key == 'W') {
+	if (keyCode == UP || key == 'w') {
 		accelerate=false;
 	} 
 
-	if (keyCode == DOWN || key == 's' || key == 'S') {
+	if (keyCode == DOWN || key == 's') {
 		decelerate=false;
 	} 
 
-	if (keyCode == LEFT || key == 'a'|| key == 'A') {
+	if (keyCode == LEFT || key == 'a') {
 		turnCounterClockwise=false;
 	} 
 
-	if (keyCode == RIGHT || key == 'd'|| key == 'D') {
+	if (keyCode == RIGHT || key == 'd') {
 		turnClockwise=false;
 	} 
 
