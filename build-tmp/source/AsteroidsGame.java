@@ -1,3 +1,19 @@
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class AsteroidsGame extends PApplet {
+
 
 /* @pjs preload="Sprites/ship.png, Sprites/asteroid.png, Sprites/shipBackward.png, Sprites/shipForward.png, Sprites/star1.png, Sprites/bullet.png, Sprites/debree.png, Sprites/game.png, Sprites/over.png, Sprites/retry.png;*/
 /* MINIM DOESNT WORK ONLINE
@@ -159,7 +175,7 @@ class SpaceShip extends Floater{
   private int rad = mySize/2 - 5;
   private double dRadians;
   public SpaceShip(){
-    acceleration=.3;   
+    acceleration=.3f;   
     myCenterX=width/2;
     myCenterY=height/2;  
     myDirectionX=0;
@@ -790,7 +806,7 @@ public void endGame(){
 }
 
 //controls rotation and acceleration key inputs!
-void keyPressed(){
+public void keyPressed(){
 	if (keyCode == UP || key == 'w') {
 		accelerate=true;
 	} 
@@ -811,7 +827,7 @@ void keyPressed(){
 		accelerate=true;
 	}
 }
-void keyReleased() {
+public void keyReleased() {
 	if (keyCode == UP || key == 'w') {
 		accelerate=false;
 	} 
@@ -833,3 +849,12 @@ void keyReleased() {
 	}
 }
 
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "AsteroidsGame" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
+}
