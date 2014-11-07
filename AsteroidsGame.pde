@@ -153,13 +153,17 @@ class aBullet extends Floater{
 public class SpaceShip extends Floater{
   public final static float ACCELLERATION=.3;
   private PImage ship;
+  private PImage[] explosion;
   private String currentImage;
   private aBullet[] bulletHolder;
   private int bulletNum;
   private int mySize = 50;
   private int rad = mySize/2 - 5;
   private double dRadians;
-  public SpaceShip(){   
+  public SpaceShip(){  
+  	explosion = new PImage[10];
+  	for(int i=0; i<explosion.length; i++)
+  		explosion[i] = loadImage("Sprites/"+i+".png"); 
     myCenterX=width/2;
     myCenterY=height/2;  
     myDirectionX=0;
