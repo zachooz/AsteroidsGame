@@ -29,6 +29,7 @@ public void setup(){
   gameOver=false;
   score = 0;
   debreeImage=loadImage("Sprites/debree.png");
+  frameRate(60);
   //music
   /*
   minim = new Minim(this);
