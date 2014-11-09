@@ -14,7 +14,6 @@ import java.io.IOException;
 
 public class AsteroidsGame extends PApplet {
 
-
 /* @pjs preload="Sprites/ship.png, Sprites/asteroid.png, Sprites/shipBackward.png, Sprites/shipForward.png, Sprites/star1.png, Sprites/bullet.png, Sprites/debree.png, Sprites/game.png, Sprites/over.png, Sprites/retry.png;*/
 /* MINIM DOESNT WORK ONLINE
 import ddf.minim.*;
@@ -641,7 +640,7 @@ public class EndStroid{
 	protected boolean collide(){
 		//ship rad is 20!
 		if((dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2) || !gameOver){
-			for(int i=0; i<30; i++){
+			for(int i=0; i<10; i++){
 				mySpaceField.createDebree(x,y,radius);
 			}
 			for(int i=0;i<2;i++){
@@ -848,7 +847,6 @@ public void keyReleased() {
 		accelerate=false;
 	}
 }
-
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "AsteroidsGame" };
     if (passedArgs != null) {

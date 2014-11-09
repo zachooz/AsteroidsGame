@@ -624,7 +624,7 @@ public class EndStroid{
 	protected boolean collide(){
 		//ship rad is 20!
 		if((dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2) || !gameOver){
-			for(int i=0; i<30; i++){
+			for(int i=0; i<10; i++){
 				mySpaceField.createDebree(x,y,radius);
 			}
 			for(int i=0;i<2;i++){
