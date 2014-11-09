@@ -67,10 +67,10 @@ public void draw() {
 	text("Score: " + score, width-10, 50); 
  
 	if (accelerate)
-		myShip.accelerate(myShip.acceleration);
+		myShip.accelerate(myShip.ACCELLERATION);
 
 	if (decelerate)
-		myShip.accelerate(myShip.acceleration*-1);
+		myShip.accelerate(myShip.ACCELLERATION*-1);
   /* USED TO CHANGE ROT WITH KEYS
 	if (turnCounterClockwise)
 		myShip.rotateShip(-5);
@@ -169,7 +169,7 @@ class aBullet extends Floater{
   } 
 }
 class SpaceShip extends Floater{
-  public float acceleration;
+  public final static float ACCELLERATION =.3f;
   private PImage ship;
   private String currentImage;
   private aBullet[] bulletHolder;
@@ -178,7 +178,6 @@ class SpaceShip extends Floater{
   private int rad = mySize/2 - 5;
   private double dRadians;
   public SpaceShip(){
-    acceleration=.3f;   
     myCenterX=width/2;
     myCenterY=height/2;  
     myDirectionX=0;
