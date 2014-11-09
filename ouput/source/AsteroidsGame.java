@@ -25,7 +25,10 @@ AudioInput input;
 private SpaceShip myShip;
 private SpaceField mySpaceField;
 private boolean accelerate, turnCounterClockwise, turnClockwise, decelerate, gameOver;
+
+//must do these outside class to lower lag
 private PImage bullet;
+private PImage debreeImage;
 
 private int shootTimer;
 private int spawnTimer;
@@ -41,6 +44,7 @@ public void setup(){
   spawnTimer=0;
   gameOver=false;
   score = 0;
+  debreeImage=loadImage("Sprites/debree.png");
   //music
   /*
   minim = new Minim(this);
@@ -182,7 +186,7 @@ class SpaceShip extends Floater{
     myPointDirection=0;
 	  ship=loadImage("Sprites/ship.png");
     currentImage="Sprites/ship.png";
-    bulletHolder = new aBullet[50];
+    bulletHolder = new aBullet[30];
     bulletNum = 0;
     dRadians = Math.asin((mouseY-myCenterY)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
     if((mouseX-myCenterX)<0){
@@ -590,7 +594,6 @@ public class Asteroid{
 }
 
 public class Debree{
-	private PImage debreeImage=loadImage("Sprites/debree.png");
 	private int radius = 10;
 	private int opacity = 255;
 	private double xDir = Math.random()*3-1;
