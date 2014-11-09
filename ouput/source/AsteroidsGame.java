@@ -447,7 +447,7 @@ public class MinAsteroid extends Asteroid{
 	protected boolean collide(){
 		//ship rad is 20!
 		if((dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2) || gameOver){
-			for(int i=0; i<10; i++){
+			for(int i=0; i<5; i++){
 				mySpaceField.createDebree(x,y,radius);
 			}
 			endGame();
@@ -459,7 +459,7 @@ public class MinAsteroid extends Asteroid{
 			if(myShip.getBullets()[i]!=null){
 				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<myShip.getBullets()[i].getRad()+radius/2){
 					myShip.getBullets()[i]=null;
-					for(int a=0; a<3; a++){
+					for(int a=0; a<2; a++){
 						mySpaceField.createDebree(x,y,radius);
 					}
 					life--;
@@ -559,7 +559,7 @@ public class Asteroid{
 	protected boolean collide(){
 		//ship rad is 20!
 		if((dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2) || gameOver){
-			for(int i=0; i<10; i++){
+			for(int i=0; i<5; i++){
 				mySpaceField.createDebree(x,y,radius);
 			}
 			endGame();
@@ -571,7 +571,7 @@ public class Asteroid{
 			if(myShip.getBullets()[i]!=null){
 				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<myShip.getBullets()[i].getRad()+radius/2){
 					myShip.getBullets()[i]=null;
-					for(int a=0; a<3; a++){
+					for(int a=0; a<2; a++){
 						mySpaceField.createDebree(x,y,radius);
 					}
 					life--;
