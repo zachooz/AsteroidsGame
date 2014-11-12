@@ -1,3 +1,19 @@
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class AsteroidsGame extends PApplet {
+
 /* @pjs preload="Sprites/ship.png, Sprites/asteroid.png, Sprites/shipBackward.png, Sprites/shipForward.png, Sprites/star1.png, Sprites/bullet.png, Sprites/debree.png, Sprites/game.png, Sprites/over.png, Sprites/retry.png;*/
 /* MINIM DOESNT WORK ONLINE
 import ddf.minim.*;
@@ -161,7 +177,7 @@ class SpaceShip extends Floater{
   private double dRadians;
   private String gun;
   public SpaceShip(){
-    acceleration=.3;   
+    acceleration=.3f;   
     myCenterX=width/2;
     myCenterY=height/2;  
     myDirectionX=0;
@@ -179,7 +195,7 @@ class SpaceShip extends Floater{
   }
 
   public void choice(){
-  	String[] guns = {"spread","rapid"};
+  	String[] guns = {"spread","rapid", "boom"};
   	int rNum = (int) (Math.random()*guns.length);
   	gun = guns[rNum];
   }
@@ -291,50 +307,53 @@ class SpaceShip extends Floater{
 	    double theX = myCenterX + ((25) * Math.cos(dRadians));
 	    double theY = myCenterY + ((25) * Math.sin(dRadians));
 
-	    double theX1 = myCenterX + ((25) * Math.cos(dRadians+.1));
-	    double theY1 = myCenterY + ((25) * Math.sin(dRadians+.1));
+	    double theX1 = myCenterX + ((25) * Math.cos(dRadians+.1f));
+	    double theY1 = myCenterY + ((25) * Math.sin(dRadians+.1f));
 
-	    double theX2= myCenterX + ((25) * Math.cos(dRadians-.1));
-	    double theY2 = myCenterY + ((25) * Math.sin(dRadians-.1));
+	    double theX2= myCenterX + ((25) * Math.cos(dRadians-.1f));
+	    double theY2 = myCenterY + ((25) * Math.sin(dRadians-.1f));
 
-	    double theX3= myCenterX + ((25) * Math.cos(dRadians+.15));
-	    double theY3 = myCenterY + ((25) * Math.sin(dRadians+.15));
+	    double theX3= myCenterX + ((25) * Math.cos(dRadians+.15f));
+	    double theY3 = myCenterY + ((25) * Math.sin(dRadians+.15f));
 
-	    double theX4= myCenterX + ((25) * Math.cos(dRadians-.15));
-	    double theY4 = myCenterY + ((25) * Math.sin(dRadians-.15));
+	    double theX4= myCenterX + ((25) * Math.cos(dRadians-.15f));
+	    double theY4 = myCenterY + ((25) * Math.sin(dRadians-.15f));
 
-	    double theX5 = myCenterX + ((25) * Math.cos(dRadians+.05));
-	    double theY5 = myCenterY + ((25) * Math.sin(dRadians+.05));
+	    double theX5 = myCenterX + ((25) * Math.cos(dRadians+.05f));
+	    double theY5 = myCenterY + ((25) * Math.sin(dRadians+.05f));
 
-	    double theX6= myCenterX + ((25) * Math.cos(dRadians-.05));
-	    double theY6 = myCenterY + ((25) * Math.sin(dRadians-.05));
+	    double theX6= myCenterX + ((25) * Math.cos(dRadians-.05f));
+	    double theY6 = myCenterY + ((25) * Math.sin(dRadians-.05f));
 
 	    bulletHolder[bulletNum]=new aBullet(dRadians, theX, theY);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians+.1, theX1, theY1);
+	    bulletHolder[bulletNum]=new aBullet(dRadians+.1f, theX1, theY1);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians-.1, theX2, theY2);
+	    bulletHolder[bulletNum]=new aBullet(dRadians-.1f, theX2, theY2);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians+.15, theX3, theY3);
+	    bulletHolder[bulletNum]=new aBullet(dRadians+.15f, theX3, theY3);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians-.15, theX4, theY4);
+	    bulletHolder[bulletNum]=new aBullet(dRadians-.15f, theX4, theY4);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians+.05, theX5, theY5);
+	    bulletHolder[bulletNum]=new aBullet(dRadians+.05f, theX5, theY5);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians-.05, theX6, theY6);
+	    bulletHolder[bulletNum]=new aBullet(dRadians-.05f, theX6, theY6);
 	    bulletNum++;
+	}
+	if(gun == "bomb"){
+
 	}
   }
   public void show(){  //Draws the floater at the current position      
@@ -852,7 +871,7 @@ public void endGame(){
 }
 
 //controls rotation and acceleration key inputs!
-void keyPressed(){
+public void keyPressed(){
 	if (keyCode == UP || key == 'w') {
 		accelerate=true;
 	} 
@@ -873,7 +892,7 @@ void keyPressed(){
 		accelerate=true;
 	}
 }
-void keyReleased() {
+public void keyReleased() {
 	if (keyCode == UP || key == 'w') {
 		accelerate=false;
 	} 
@@ -893,4 +912,13 @@ void keyReleased() {
 	if (key == 32){
 		accelerate=false;
 	}
+}
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "AsteroidsGame" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
 }
