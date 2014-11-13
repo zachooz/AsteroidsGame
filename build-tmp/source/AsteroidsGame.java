@@ -97,13 +97,38 @@ public void draw() {
 
 }
 
-class aBullet extends Floater{
+class ABomb {
+	private double myRad = 0;
+	private int opacity=255;
+	private double y;
+	private double x;
+	public ABomb(double x, double y){
+		this.x=x;
+		this.y=y;
+	}
+
+	private void show(){
+		noFill();
+		stroke(0xff00FFFF);
+		strokeWeight(10);  // Beastly
+		ellipse((float)x,(float)y,(float)myRad,(float)myRad);
+		fill(255,255,255,opacity);
+		rect(0,0, 1000, 1000);
+		if(opacity>0)
+			opacity-=5;
+	}
+	public void run(){
+		show();
+	}
+}
+
+class ABullet extends Floater{
   private int mySize = 15;
   private float rad = mySize/2-1;
   private String currentBullet;
   private double speed;
   private double dRadians;
-  public aBullet(double dRadians, double myCenterX, double myCenterY){
+  public ABullet(double dRadians, double myCenterX, double myCenterY){
     speed = 15;  
     this.dRadians = dRadians;
     this.myCenterX=myCenterX;
@@ -170,8 +195,10 @@ class SpaceShip extends Floater{
   public float acceleration;
   private PImage ship;
   private String currentImage;
-  private aBullet[] bulletHolder;
+  private ABullet[] bulletHolder;
   private int bulletNum;
+  private ABomb[] bombHolder;
+  private int bombNum;
   private int mySize = 50;
   private int rad = mySize/2 - 5;
   private double dRadians;
@@ -183,10 +210,12 @@ class SpaceShip extends Floater{
     myDirectionX=0;
     myDirectionY=0;
     myPointDirection=0;
-	  ship=loadImage("Sprites/ship.png");
+	ship=loadImage("Sprites/ship.png");
     currentImage="Sprites/ship.png";
-    bulletHolder = new aBullet[50];
+    bulletHolder = new ABullet[50];
     bulletNum = 0;
+  	bombHolder = new ABomb[10];
+    bombNum = 0;
     dRadians = Math.asin((mouseY-myCenterY)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
     if((mouseX-myCenterX)<0){
       dRadians=Math.PI-dRadians;
@@ -195,15 +224,18 @@ class SpaceShip extends Floater{
   }
 
   public void choice(){
-  	String[] guns = {"spread","rapid", "boom"};
+  	String[] guns = {"spread","rapid"};
   	int rNum = (int) (Math.random()*guns.length);
   	gun = guns[rNum];
   }
   public int getRad(){
     return (int) (rad);
   } 
-  public aBullet[] getBullets(){
+  public ABullet[] getBullets(){
 	return bulletHolder;
+  }
+  public ABomb[] getBombs(){
+	return bombHolder;
   }
   public void setX(int x){
     myCenterX=x;
@@ -279,10 +311,15 @@ class SpaceShip extends Floater{
     else if (myCenterY < 0){     
       myCenterY = height;    
     }
-    for(aBullet oneBullet : bulletHolder){
+    for(ABullet oneBullet : bulletHolder){
       if(oneBullet!=null){
         oneBullet.move();
         oneBullet.show();
+      }
+    }
+    for(ABomb oneBomb : bombHolder){
+      if(oneBomb!=null){
+         oneBomb.run();
       }
     }
   }
@@ -290,6 +327,8 @@ class SpaceShip extends Floater{
     myPointDirection=dRadians*(190/Math.PI);
     if(bulletNum>=bulletHolder.length)
       bulletNum=0;
+	if(bombNum>=bombHolder.length)
+	      bombNum=0;
   	if(gun == "rapid"){
   		waitTime=100;
 	    double theX1 = myCenterX + ((25) * Math.cos(dRadians+Math.PI/8));
@@ -297,9 +336,9 @@ class SpaceShip extends Floater{
 
 	    double theX2= myCenterX + ((25) * Math.cos(dRadians-Math.PI/8));
 	    double theY2 = myCenterY + ((25) * Math.sin(dRadians-Math.PI/8));
-	    bulletHolder[bulletNum]=new aBullet(dRadians, theX1, theY1);
+	    bulletHolder[bulletNum]=new ABullet(dRadians, theX1, theY1);
 	    bulletNum++;
-	    bulletHolder[bulletNum]=new aBullet(dRadians, theX2, theY2);
+	    bulletHolder[bulletNum]=new ABullet(dRadians, theX2, theY2);
 	    bulletNum++;
 	}
   	if(gun == "spread"){
@@ -325,35 +364,37 @@ class SpaceShip extends Floater{
 	    double theX6= myCenterX + ((25) * Math.cos(dRadians-.05f));
 	    double theY6 = myCenterY + ((25) * Math.sin(dRadians-.05f));
 
-	    bulletHolder[bulletNum]=new aBullet(dRadians, theX, theY);
+	    bulletHolder[bulletNum]=new ABullet(dRadians, theX, theY);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians+.1f, theX1, theY1);
+	    bulletHolder[bulletNum]=new ABullet(dRadians+.1f, theX1, theY1);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians-.1f, theX2, theY2);
+	    bulletHolder[bulletNum]=new ABullet(dRadians-.1f, theX2, theY2);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians+.15f, theX3, theY3);
+	    bulletHolder[bulletNum]=new ABullet(dRadians+.15f, theX3, theY3);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians-.15f, theX4, theY4);
+	    bulletHolder[bulletNum]=new ABullet(dRadians-.15f, theX4, theY4);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians+.05f, theX5, theY5);
+	    bulletHolder[bulletNum]=new ABullet(dRadians+.05f, theX5, theY5);
 	    bulletNum++;
 	    if(bulletNum>=bulletHolder.length)
 	      bulletNum=0;
-	    bulletHolder[bulletNum]=new aBullet(dRadians-.05f, theX6, theY6);
+	    bulletHolder[bulletNum]=new ABullet(dRadians-.05f, theX6, theY6);
 	    bulletNum++;
 	}
-	if(gun == "bomb"){
 
+	if(gun == "boom"){
+		bombHolder[bombNum] = new ABomb(this.getX(),this.getY());
+		bombNum++;
 	}
   }
   public void show(){  //Draws the floater at the current position      
