@@ -2,7 +2,7 @@ Asteroids
 ==================
 An asteroids Game!
 
-WARNING: ONLY WORKS IN CHROME LAGS IN IE AND FIREFOX
+Note: for best use download, otherwise use chrome
 
 #Instructions
 1. W or up arrow to accellerate
