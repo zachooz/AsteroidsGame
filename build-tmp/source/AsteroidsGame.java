@@ -32,6 +32,8 @@ private int spawnTimer;
 private int s;
 private int score;
 private int waitTime;
+
+private int num;
 //your variable declarations here
 public void setup(){
   size(700,700);
@@ -43,6 +45,7 @@ public void setup(){
   gameOver=false;
   score = 0;
   waitTime = 100;
+  num = 0;
   //music
   /*
   minim = new Minim(this);
@@ -97,28 +100,55 @@ public void draw() {
 
 }
 
-class ABomb {
+public class ABomb {
 	private double myRad = 0;
 	private int opacity=255;
 	private double y;
 	private double x;
+	private int theColor;
 	public ABomb(double x, double y){
+		if(num%3 == 0){
+			theColor = 0;
+		} else if(num%2 == 0) {
+			theColor = 1;
+		} else {
+			theColor = 2;
+		}
+		num++;
 		this.x=x;
 		this.y=y;
 	}
 
 	private void show(){
 		noFill();
-		stroke(0xff00FFFF);
+		if(theColor == 0){
+			stroke(255,255,255);
+		} else if(theColor == 1){
+			stroke(0,255,0);
+		} else{
+			stroke(255,0,0);
+		}
 		strokeWeight(10);  // Beastly
 		ellipse((float)x,(float)y,(float)myRad,(float)myRad);
-		fill(255,255,255,opacity);
-		rect(0,0, 1000, 1000);
-		if(opacity>0)
-			opacity-=5;
+		myRad++;
 	}
 	public void run(){
 		show();
+	}
+	public double getX(){
+		return x;
+	}
+	public double getY(){
+		return y;
+	}
+
+	public double getRad(){
+		return myRad;
+	}
+	public boolean done(){
+		if(myRad > 200)
+			return true;
+		return false;
 	}
 }
 
@@ -214,7 +244,7 @@ class SpaceShip extends Floater{
     currentImage="Sprites/ship.png";
     bulletHolder = new ABullet[50];
     bulletNum = 0;
-  	bombHolder = new ABomb[10];
+  	bombHolder = new ABomb[20];
     bombNum = 0;
     dRadians = Math.asin((mouseY-myCenterY)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
     if((mouseX-myCenterX)<0){
@@ -224,7 +254,7 @@ class SpaceShip extends Floater{
   }
 
   public void choice(){
-  	String[] guns = {"spread","rapid"};
+  	String[] guns = {"spread","rapid","boom"};
   	int rNum = (int) (Math.random()*guns.length);
   	gun = guns[rNum];
   }
@@ -317,11 +347,6 @@ class SpaceShip extends Floater{
         oneBullet.show();
       }
     }
-    for(ABomb oneBomb : bombHolder){
-      if(oneBomb!=null){
-         oneBomb.run();
-      }
-    }
   }
   public void shoot(){
     myPointDirection=dRadians*(190/Math.PI);
@@ -338,6 +363,8 @@ class SpaceShip extends Floater{
 	    double theY2 = myCenterY + ((25) * Math.sin(dRadians-Math.PI/8));
 	    bulletHolder[bulletNum]=new ABullet(dRadians, theX1, theY1);
 	    bulletNum++;
+	    if(bulletNum>=bulletHolder.length)
+	      bulletNum=0;
 	    bulletHolder[bulletNum]=new ABullet(dRadians, theX2, theY2);
 	    bulletNum++;
 	}
@@ -393,15 +420,26 @@ class SpaceShip extends Floater{
 	}
 
 	if(gun == "boom"){
+		waitTime=400;
 		bombHolder[bombNum] = new ABomb(this.getX(),this.getY());
 		bombNum++;
 	}
   }
   public void show(){  //Draws the floater at the current position      
-    //convert degrees to radians for sin and cos         
-    dRadians = Math.acos((mouseX-myCenterX)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
+    //convert degrees to radians for sin and cos   
+    if(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY)!=0){
+    	dRadians = Math.acos((mouseX-myCenterX)/(dist((float)myCenterX,(float)myCenterY,mouseX,mouseY))); 
+    }
     if((mouseY-myCenterY)<0){
       dRadians*=-1;
+    }
+    for(int i = 0; i<bombHolder.length; i++){
+      if(bombHolder[i]!=null){
+         bombHolder[i].run();
+         if(bombHolder[i].done()){
+         	bombHolder[i] = null;
+         }
+      }
     }
 	   pushMatrix();
 		    imageMode(CENTER);
@@ -572,6 +610,14 @@ public class MinAsteroid extends Asteroid{
 				}
 			}
 		}
+		for(int i = 0; i<myShip.getBombs().length; i++){
+			if(myShip.getBombs()[i] != null){
+				if(dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())<myShip.getBombs()[i].getRad()/2+20 && dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())>myShip.getBombs()[i].getRad()/2-20){
+					mySpaceField.createDebree(x,y,radius);
+					life-=.05f;
+				}
+			}
+		}
 		if(life<=0){
 			score+=1;
 			return true;
@@ -585,7 +631,7 @@ public class Asteroid{
 	protected double x, y, directionX, directionY;
 	protected PImage asteroidImage=loadImage("Sprites/asteroid.png");
 	protected double lifeTime = 20;
-	protected int life=5;
+	protected double life=5;
 	public Asteroid(){
 		setPos();
 		makeDirection(x, y);
@@ -683,7 +729,17 @@ public class Asteroid{
 					life--;
 				}
 			}
+	
 		}
+		for(int i = 0; i<myShip.getBombs().length; i++){
+			if(myShip.getBombs()[i] != null){
+				if(dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())<myShip.getBombs()[i].getRad()/2+50 && dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())>myShip.getBombs()[i].getRad()/2-50){
+					mySpaceField.createDebree(x,y,radius);
+					life-=.05f;
+				}
+			}
+		}
+
 		if(life<=0){
 			mySpaceField.spawnMinStroid(x,y);
 			mySpaceField.spawnMinStroid(x,y);
@@ -723,7 +779,7 @@ public class Debree{
 }
 
 public class EndStroid{
-	private int life=20;
+	private double life=20;
 	private double x, y;
 	private int radius;
 	private PImage asteroidImage;
@@ -771,6 +827,14 @@ public class EndStroid{
 					if(imageName=="Sprites/retry.png"){
 						life--;
 					}
+				}
+			}
+		}
+		for(int i = 0; i<myShip.getBombs().length; i++){
+			if(myShip.getBombs()[i] != null){
+				if(dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())<myShip.getBombs()[i].getRad()/2+radius/2 && dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())>myShip.getBombs()[i].getRad()/2-20){
+					mySpaceField.createDebree(x,y,radius);
+					life-=.1f;
 				}
 			}
 		}
@@ -909,6 +973,9 @@ public void endGame(){
 	myShip.setDirectionY(0);
 	myShip.choice();
 	mySpaceField.endGame();
+
+	for(int i = 0; i<myShip.getBombs().length; i++)
+		myShip.getBombs()[i] = null;
 }
 
 //controls rotation and acceleration key inputs!
