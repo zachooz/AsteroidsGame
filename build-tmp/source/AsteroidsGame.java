@@ -52,6 +52,7 @@ public void setup(){
   player = minim.loadFile("pew.mp3");
   input = minim.getLineIn();
   */
+  cursor(CROSS);
 }
 
 public void draw() {
@@ -100,57 +101,6 @@ public void draw() {
 
 }
 
-public class ABomb {
-	private double myRad = 0;
-	private int opacity=255;
-	private double y;
-	private double x;
-	private int theColor;
-	public ABomb(double x, double y){
-		if(num%3 == 0){
-			theColor = 0;
-		} else if(num%2 == 0) {
-			theColor = 1;
-		} else {
-			theColor = 2;
-		}
-		num++;
-		this.x=x;
-		this.y=y;
-	}
-
-	private void show(){
-		noFill();
-		if(theColor == 0){
-			stroke(255,255,255);
-		} else if(theColor == 1){
-			stroke(0,255,0);
-		} else{
-			stroke(255,0,0);
-		}
-		strokeWeight(10);  // Beastly
-		ellipse((float)x,(float)y,(float)myRad,(float)myRad);
-		myRad++;
-	}
-	public void run(){
-		show();
-	}
-	public double getX(){
-		return x;
-	}
-	public double getY(){
-		return y;
-	}
-
-	public double getRad(){
-		return myRad;
-	}
-	public boolean done(){
-		if(myRad > 200)
-			return true;
-		return false;
-	}
-}
 
 class ABullet extends Floater{
   private int mySize = 15;
@@ -221,7 +171,92 @@ class ABullet extends Floater{
     myCenterY += myDirectionY;       
   } 
 }
-class SpaceShip extends Floater{
+
+public class ABomb {
+	private double myRad = 0;
+	private int opacity=255;
+	private double y;
+	private double x;
+	private int theColor;
+	public ABomb(double x, double y){
+		if(num%3 == 0){
+			theColor = 0;
+		} else if(num%2 == 0) {
+			theColor = 1;
+		} else {
+			theColor = 2;
+		}
+		num++;
+		this.x=x;
+		this.y=y;
+	}
+
+	private void show(){
+		noFill();
+		if(theColor == 0){
+			stroke(255,255,255);
+		} else if(theColor == 1){
+			stroke(0,255,0);
+		} else{
+			stroke(255,0,0);
+		}
+		strokeWeight(10);  // Beastly
+		ellipse((float)x,(float)y,(float)myRad,(float)myRad);
+		myRad++;
+	}
+	public void run(){
+		show();
+	}
+	public double getX(){
+		return x;
+	}
+	public double getY(){
+		return y;
+	}
+
+	public double getRad(){
+		return myRad;
+	}
+	public boolean done(){
+		if(myRad > 200)
+			return true;
+		return false;
+	}
+}
+public class Beam{
+	int length = 1000;
+	double x1;
+	double x2;
+	double y1;
+	double y2;
+	double dRadians;
+	public Beam(double x1, double y1, double dRadians){
+		this.x1=x1;
+		this.y1=y1;
+		this.dRadians = dRadians;
+		x2 = x1 + (length* Math.cos(dRadians));
+		y2 = y1 + (length* Math.sin(dRadians));
+
+	}
+	public void show(){
+		strokeWeight(1);
+		line((float)x1,(float)y1,(float)x2,(float)y2);
+	}
+	public double getX1(){
+		return x1;
+	}
+	public double getX2(){
+		return x2;
+	}
+	public double getY1(){
+		return y1;
+	}
+	public double getY2(){
+		return y2;
+	}
+
+}
+public class SpaceShip extends Floater{
   public float acceleration;
   private PImage ship;
   private String currentImage;
@@ -254,9 +289,12 @@ class SpaceShip extends Floater{
   }
 
   public void choice(){
-  	String[] guns = {"spread","rapid","boom"};
+  	String[] guns = {"spread","rapid","boom","spread","rapid","rapid","rapid"};
   	int rNum = (int) (Math.random()*guns.length);
   	gun = guns[rNum];
+  }
+  public String getGun(){
+  	return gun;
   }
   public int getRad(){
     return (int) (rad);
@@ -424,6 +462,10 @@ class SpaceShip extends Floater{
 		bombHolder[bombNum] = new ABomb(this.getX(),this.getY());
 		bombNum++;
 	}
+
+	if(gun == "beam"){
+
+	}
   }
   public void show(){  //Draws the floater at the current position      
     //convert degrees to radians for sin and cos   
@@ -564,11 +606,13 @@ public class Star{
 	
 }
 public class MinAsteroid extends Asteroid{
-	protected int radius=35;
 	public MinAsteroid(double x, double y){
+		radius=35;
+		type = "MinAsteroid";
 		this.x=x;
 		this.y=y;
 		makeDirection(x, y);
+
 	}
 	protected void makeDirection(double x, double y){
 		int speedConstant=4;
@@ -580,58 +624,20 @@ public class MinAsteroid extends Asteroid{
 			makeDirection(x,y);
 		}
 	}
-	protected void setPos(){
-		return;
-	}
 	protected void display(){
 		imageMode(CENTER);
 		tint(255, 255);
 		image(asteroidImage, (float)x, (float)y, (int)this.radius, (int)this.radius);
 	}
-	protected boolean collide(){
-		//ship rad is 20!
-		if((dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2) || gameOver){
-			for(int i=0; i<10; i++){
-				mySpaceField.createDebree(x,y,radius);
-			}
-			endGame();
-			return true;
-		}
-		
-		//bullet rad is 6.5
-		for(int i = 0; i<myShip.getBullets().length; i++){
-			if(myShip.getBullets()[i]!=null){
-				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<myShip.getBullets()[i].getRad()+radius/2){
-					myShip.getBullets()[i]=null;
-					for(int a=0; a<3; a++){
-						mySpaceField.createDebree(x,y,radius);
-					}
-					life--;
-				}
-			}
-		}
-		for(int i = 0; i<myShip.getBombs().length; i++){
-			if(myShip.getBombs()[i] != null){
-				if(dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())<myShip.getBombs()[i].getRad()/2+20 && dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())>myShip.getBombs()[i].getRad()/2-20){
-					mySpaceField.createDebree(x,y,radius);
-					life-=.05f;
-				}
-			}
-		}
-		if(life<=0){
-			score+=1;
-			return true;
-		}
-		return false;
-	}
 }
 
 public class Asteroid{
-	private int radius=70;
+	protected int radius=70;
 	protected double x, y, directionX, directionY;
 	protected PImage asteroidImage=loadImage("Sprites/asteroid.png");
 	protected double lifeTime = 20;
 	protected double life=5;
+	protected String type = "Asteroid";
 	public Asteroid(){
 		setPos();
 		makeDirection(x, y);
@@ -643,7 +649,7 @@ public class Asteroid{
 		this.y=y;
 	}
 	
-	protected void setPos(){
+	private void setPos(){
 		int ran = (int)(Math.random()*4);
 		if(ran==0){
 			//bottom
@@ -709,7 +715,6 @@ public class Asteroid{
 		return false;
 	}
 	protected boolean collide(){
-		//ship rad is 20!
 		if((dist((float)x,(float)y,myShip.getX(),myShip.getY())<myShip.getRad()+radius/2) || gameOver){
 			for(int i=0; i<10; i++){
 				mySpaceField.createDebree(x,y,radius);
@@ -718,32 +723,37 @@ public class Asteroid{
 			return true;
 		}
 		
-		//bullet rad is 6.5
-		for(int i = 0; i<myShip.getBullets().length; i++){
-			if(myShip.getBullets()[i]!=null){
-				if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<myShip.getBullets()[i].getRad()+radius/2){
-					myShip.getBullets()[i]=null;
-					for(int a=0; a<3; a++){
-						mySpaceField.createDebree(x,y,radius);
+		if(myShip.getGun() == "spread" || myShip.getGun() == "rapid"){
+			for(int i = 0; i<myShip.getBullets().length; i++){
+				if(myShip.getBullets()[i]!=null){
+					if(dist((float)x,(float)y,myShip.getBullets()[i].getX(),myShip.getBullets()[i].getY())<myShip.getBullets()[i].getRad()+radius/2){
+						myShip.getBullets()[i]=null;
+						for(int a=0; a<3; a++){
+							mySpaceField.createDebree(x,y,radius);
+						}
+						life--;
 					}
-					life--;
 				}
-			}
-	
-		}
-		for(int i = 0; i<myShip.getBombs().length; i++){
-			if(myShip.getBombs()[i] != null){
-				if(dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())<myShip.getBombs()[i].getRad()/2+50 && dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())>myShip.getBombs()[i].getRad()/2-50){
-					mySpaceField.createDebree(x,y,radius);
-					life-=.05f;
-				}
+		
 			}
 		}
+		if(myShip.getGun() == "boom"){
+			for(int i = 0; i<myShip.getBombs().length; i++){
+				if(myShip.getBombs()[i] != null){
+					if(dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())<myShip.getBombs()[i].getRad()/2+50 && dist((float)x,(float)y,(float)myShip.getBombs()[i].getX(),(float)myShip.getBombs()[i].getY())>myShip.getBombs()[i].getRad()/2-50){
+						mySpaceField.createDebree(x,y,radius);
+						life-=.05f;
+					}
+				}
+			}
+	    }
 
 		if(life<=0){
-			mySpaceField.spawnMinStroid(x,y);
-			mySpaceField.spawnMinStroid(x,y);
-			mySpaceField.spawnMinStroid(x,y);
+			if(type == "Asteroid"){
+				mySpaceField.spawnMinStroid(x,y);
+				mySpaceField.spawnMinStroid(x,y);
+				mySpaceField.spawnMinStroid(x,y);
+			}
 			score+=2;
 			return true;
 		}
