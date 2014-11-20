@@ -208,12 +208,13 @@ public class ABomb {
 	}
 }
 public class Beam{
-	int length = 1000;
-	double x1;
-	double x2;
-	double y1;
-	double y2;
-	double dRadians;
+	private int length = 1000;
+	private double x1;
+	private double x2;
+	private double y1;
+	private double y2;
+	private double dRadians;
+	private int time = 100;
 	public Beam(double x1, double y1, double dRadians){
 		this.x1=x1;
 		this.y1=y1;
@@ -237,6 +238,12 @@ public class Beam{
 	}
 	public double getY2(){
 		return y2;
+	}
+	public boolean alive(){
+		time--;
+		if(time <= 0)
+			return false;
+		return true;
 	}
 
 }
@@ -273,7 +280,8 @@ public class SpaceShip extends Floater{
   }
 
   public void choice(){
-  	String[] guns = {"spread","rapid","boom","spread","rapid","rapid","rapid"};
+  	//boom may be added
+  	String[] guns = {"spread","spread","rapid","spread","rapid","rapid","rapid"};
   	int rNum = (int) (Math.random()*guns.length);
   	gun = guns[rNum];
   }
