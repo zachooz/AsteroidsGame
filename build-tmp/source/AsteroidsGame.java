@@ -296,7 +296,8 @@ public class SpaceShip extends Floater{
   }
 
   public void choice(){
-  	String[] guns = {"spread","spread","rapid","boom","spread","rapid","rapid","rapid"};
+  	//boom may be added
+  	String[] guns = {"spread","spread","rapid","spread","rapid","rapid","rapid","boom","boom","boom","boom"};
   	int rNum = (int) (Math.random()*guns.length);
   	gun = guns[rNum];
   }
@@ -465,7 +466,7 @@ public class SpaceShip extends Floater{
 	}
 
 	if(gun == "boom"){
-		waitTime=400;
+		waitTime=600;
 		bombHolder[bombNum] = new ABomb(this.getX(),this.getY());
 		bombNum++;
 	}
