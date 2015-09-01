@@ -281,7 +281,7 @@ public class SpaceShip extends Floater{
 
   public void choice(){
   	//boom may be added
-  	String[] guns = {"spread","spread","rapid","spread","rapid","rapid","rapid","boom","boom","boom","boom"};
+  	String[] guns = {"spread","spread","spread","rapid","spread","rapid","rapid","rapid","rapid","rapid","rapid","rapid","rapid","boom","rapid","rapid","rapid","rapid","rapid","rapid","spread","spread","spread","spread","spread"};
   	int rNum = (int) (Math.random()*guns.length);
   	gun = guns[rNum];
   }
@@ -385,7 +385,7 @@ public class SpaceShip extends Floater{
 	if(bombNum>=bombHolder.length)
 	      bombNum=0;
   	if(gun == "rapid"){
-  	    waitTime=10;
+  	    waitTime=100;
 	    double theX1 = myCenterX + ((25) * Math.cos(dRadians+Math.PI/8));
 	    double theY1 = myCenterY + ((25) * Math.sin(dRadians+Math.PI/8));
 
@@ -399,7 +399,7 @@ public class SpaceShip extends Floater{
 	    bulletNum++;
 	}
   	if(gun == "spread"){
-  		waitTime=400;
+  	    waitTime=400;
 	    double theX = myCenterX + ((25) * Math.cos(dRadians));
 	    double theY = myCenterY + ((25) * Math.sin(dRadians));
 
