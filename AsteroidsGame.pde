@@ -24,7 +24,7 @@ public void setup(){
   myShip =  new SpaceShip();
   mySpaceField = new SpaceField();
   bullet=loadImage("Sprites/bullet.png");
-  shootTimer = 100;
+  shootTimer = 10;
   spawnTimer=0;
   gameOver=false;
   score = 0;
