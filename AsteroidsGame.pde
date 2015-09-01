@@ -24,7 +24,7 @@ public void setup(){
   myShip =  new SpaceShip();
   mySpaceField = new SpaceField();
   bullet=loadImage("Sprites/bullet.png");
-  shootTimer = 10;
+  shootTimer = 100;
   spawnTimer=0;
   gameOver=false;
   score = 0;
@@ -385,7 +385,7 @@ public class SpaceShip extends Floater{
 	if(bombNum>=bombHolder.length)
 	      bombNum=0;
   	if(gun == "rapid"){
-  		waitTime=100;
+  	    waitTime=10;
 	    double theX1 = myCenterX + ((25) * Math.cos(dRadians+Math.PI/8));
 	    double theY1 = myCenterY + ((25) * Math.sin(dRadians+Math.PI/8));
 
