@@ -1,8 +1,9 @@
 Asteroids
 ==================
-An asteroids Game!
+An asteroids game made for my highschool CS class!
+http://zachooz.github.io/AsteroidsGame/
 
-Note: for best use download, otherwise use chrome
+Note: For best performacne, use chrome.
 
 #Instructions
 1. W or up arrow to accellerate
