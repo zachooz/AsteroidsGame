@@ -1,6 +1,7 @@
 Asteroids
 ==================
 An asteroids game made for my highschool CS class!
+
 http://zachooz.github.io/AsteroidsGame/
 
 Note: For best performacne, use chrome.
